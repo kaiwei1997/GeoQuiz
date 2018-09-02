@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(savedInstanceState!=null){
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX,0);
+            mAnsweredQuestions = savedInstanceState.getIntegerArrayList(KEY_ANSWER_INDEX);
         }
 
         //challenge 2.1
@@ -131,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
         Log.i(TAG,"onSaveInstanceState");
         savedInstanceState.putInt(KEY_INDEX,mCurrentIndex);
+        savedInstanceState.putIntegerArrayList(KEY_ANSWER_INDEX,mAnsweredQuestions);
     }
 
     @Override
