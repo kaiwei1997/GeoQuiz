@@ -156,15 +156,15 @@ public class MainActivity extends AppCompatActivity {
     //challenge 2.2
     private void previousQuestion() {
 
-        mCurrentIndex = (5 + mCurrentIndex) % mQuestionBank.length;
-        updateQuestion();
-        /**if (mCurrentIndex > 0) {
-         mCurrentIndex -= 1;
-         updateQuestion();
-         } else {
-         mCurrentIndex = mQuestionBank.length - 1;
-         updateQuestion();
-         }**/
+        /**mCurrentIndex = (5 + mCurrentIndex) % mQuestionBank.length;
+         updateQuestion();**/
+        if (mCurrentIndex > 0) {
+            mCurrentIndex -= 1;
+            updateQuestion();
+        } else {
+            mCurrentIndex = mQuestionBank.length - 1;
+            updateQuestion();
+        }
     }
 
     private void updateQuestion() {
