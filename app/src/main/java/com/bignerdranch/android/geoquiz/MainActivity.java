@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mNextButton;
     private TextView mQuestionTextView;
 
-    private static final String TAG ="QuizActivity";
+    private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
     private static final String KEY_ANSWER_INDEX = "answered_index";
 
@@ -43,11 +43,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"onCreate(Bundle) called");
+        Log.d(TAG, "onCreate(Bundle) called");
         setContentView(R.layout.activity_main);
 
-        if(savedInstanceState!=null){
-            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX,0);
+        if (savedInstanceState != null) {
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
             mAnsweredQuestions = savedInstanceState.getIntegerArrayList(KEY_ANSWER_INDEX);
         }
 
@@ -110,41 +110,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
-        Log.d(TAG,"onStart() called");
+        Log.d(TAG, "onStart() called");
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        Log.d(TAG,"onResume() called");
+        Log.d(TAG, "onResume() called");
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
-        Log.d(TAG,"onPause() called");
+        Log.d(TAG, "onPause() called");
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState){
+    public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        Log.i(TAG,"onSaveInstanceState");
-        savedInstanceState.putInt(KEY_INDEX,mCurrentIndex);
-        savedInstanceState.putIntegerArrayList(KEY_ANSWER_INDEX,mAnsweredQuestions);
+        Log.i(TAG, "onSaveInstanceState");
+        savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+        savedInstanceState.putIntegerArrayList(KEY_ANSWER_INDEX, mAnsweredQuestions);
     }
 
     @Override
-    public void onStop(){
+    public void onStop() {
         super.onStop();
-        Log.d(TAG,"onStop() called");
+        Log.d(TAG, "onStop() called");
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG,"onDestroy() called");
+        Log.d(TAG, "onDestroy() called");
     }
 
     private void nextQuestion() {
@@ -155,19 +155,22 @@ public class MainActivity extends AppCompatActivity {
 
     //challenge 2.2
     private void previousQuestion() {
-        if (mCurrentIndex > 0) {
-            mCurrentIndex -= 1;
-            updateQuestion();
-        } else {
-            mCurrentIndex = mQuestionBank.length - 1;
-            updateQuestion();
-        }
+
+        mCurrentIndex = (5 + mCurrentIndex) % mQuestionBank.length;
+        updateQuestion();
+        /**if (mCurrentIndex > 0) {
+         mCurrentIndex -= 1;
+         updateQuestion();
+         } else {
+         mCurrentIndex = mQuestionBank.length - 1;
+         updateQuestion();
+         }**/
     }
 
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getTextResId();
         mQuestionTextView.setText(question);
-        if(mAnsweredQuestions.contains(mCurrentIndex)) {
+        if (mAnsweredQuestions.contains(mCurrentIndex)) {
             mTrueButton.setClickable(false);
             mFalseButton.setClickable(false);
         } else {
@@ -191,13 +194,13 @@ public class MainActivity extends AppCompatActivity {
 
         Toast.makeText(this, messageResID, Toast.LENGTH_SHORT).show();
 
-        if((mNumberOfCorrect + mNumberofIncorrect)== mQuestionBank.length){
-            double mark = ((double)mNumberOfCorrect/(double)mQuestionBank.length)*100;
+        if ((mNumberOfCorrect + mNumberofIncorrect) == mQuestionBank.length) {
+            double mark = ((double) mNumberOfCorrect / (double) mQuestionBank.length) * 100;
             Toast.makeText(MainActivity.this,
-                    getString(R.string.amount_of_correct_answers )+ Integer.toString(mNumberOfCorrect) + "\n" +
-                            getString(R.string.amount_of_incorrect_answers )+ Integer.toString(mNumberofIncorrect) + "\n" +
-                            getString(R.string.final_mark ) +  String.format("%.2f",mark)
-                    ,Toast.LENGTH_SHORT).show();
+                    getString(R.string.amount_of_correct_answers) + Integer.toString(mNumberOfCorrect) + "\n" +
+                            getString(R.string.amount_of_incorrect_answers) + Integer.toString(mNumberofIncorrect) + "\n" +
+                            getString(R.string.final_mark) + String.format("%.2f", mark)
+                    , Toast.LENGTH_SHORT).show();
         }
     }
 }
