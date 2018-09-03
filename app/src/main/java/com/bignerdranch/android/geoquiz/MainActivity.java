@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this,
                     getString(R.string.amount_of_correct_answers) + Integer.toString(mNumberOfCorrect) + "\n" +
                             getString(R.string.amount_of_incorrect_answers) + Integer.toString(mNumberofIncorrect) + "\n" +
-                            getString(R.string.final_mark) + String.format("%.2f", mark)
+                            getString(R.string.final_mark) + String.format("%.2f", mark) + getString(R.string.percent)
                     , Toast.LENGTH_SHORT).show();
         }
     }

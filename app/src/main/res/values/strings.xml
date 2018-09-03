@@ -15,4 +15,5 @@
     <string name="amount_of_correct_answers">Correct: </string>
     <string name="amount_of_incorrect_answers">Incorrect: </string>
     <string name="final_mark">Final mark: </string>
+    <string name="percent">%</string>
 </resources>
