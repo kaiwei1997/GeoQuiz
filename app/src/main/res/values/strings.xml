@@ -16,4 +16,6 @@
     <string name="amount_of_incorrect_answers">Incorrect: </string>
     <string name="final_mark">Final mark: </string>
     <string name="percent">%</string>
+    <string name="reset_button">Reset</string>
+    <string name="answered_question">You have answered this question</string>
 </resources>

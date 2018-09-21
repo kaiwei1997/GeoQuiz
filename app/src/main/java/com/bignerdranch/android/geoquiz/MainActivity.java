@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button mTrueButton;
     private Button mFalseButton;
+    private Button mResetButton;
     private ImageButton mPreviousbutton;
     private Button mNextButton;
     private TextView mQuestionTextView;
@@ -110,6 +111,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mResetButton = (Button) findViewById(R.id.reset_button);
+        mResetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clear();
+            }
+        });
+
         updateQuestion();
     }
 
@@ -179,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
         if (mAnsweredQuestions.contains(mCurrentIndex)) {
             mTrueButton.setClickable(false);
             mFalseButton.setClickable(false);
+            Toast.makeText(MainActivity.this,R.string.answered_question,Toast.LENGTH_SHORT).show();
         } else {
             mTrueButton.setClickable(true);
             mFalseButton.setClickable(true);
@@ -207,6 +217,16 @@ public class MainActivity extends AppCompatActivity {
                             getString(R.string.amount_of_incorrect_answers) + Integer.toString(mNumberOfIncorrect) + "\n" +
                             getString(R.string.final_mark) + String.format("%.2f", mark) + getString(R.string.percent)
                     , Toast.LENGTH_SHORT).show();
+            mResetButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void clear(){
+        mCurrentIndex = 0;
+        mNumberOfCorrect = 0;
+        mNumberOfIncorrect = 0;
+        mAnsweredQuestions.clear();
+        updateQuestion();
+        mResetButton.setVisibility(View.INVISIBLE);
     }
 }
