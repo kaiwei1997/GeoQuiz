@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
     private static final String KEY_ANSWER_INDEX = "answered_index";
+    private static final String KEY_ANSWER_CORRECT = "correct_question";
+    private static final String KEY_ANSWER_INCORRECT = "incorrect_question";
 
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Integer> mAnsweredQuestions = new ArrayList<>();
 
     private int mNumberOfCorrect = 0;
-    private int mNumberofIncorrect = 0;
+    private int mNumberOfIncorrect = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
             mAnsweredQuestions = savedInstanceState.getIntegerArrayList(KEY_ANSWER_INDEX);
+            mNumberOfCorrect = savedInstanceState.getInt(KEY_ANSWER_CORRECT,0);
+            mNumberOfIncorrect = savedInstanceState.getInt(KEY_ANSWER_INCORRECT,0);
         }
 
         //challenge 2.1
@@ -133,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "onSaveInstanceState");
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
         savedInstanceState.putIntegerArrayList(KEY_ANSWER_INDEX, mAnsweredQuestions);
+        savedInstanceState.putInt(KEY_ANSWER_CORRECT,mNumberOfCorrect);
+        savedInstanceState.putInt(KEY_ANSWER_INCORRECT,mNumberOfIncorrect);
     }
 
     @Override
@@ -189,16 +195,16 @@ public class MainActivity extends AppCompatActivity {
             mNumberOfCorrect += 1;
         } else {
             messageResID = R.string.incorrect_toast;
-            mNumberofIncorrect += 1;
+            mNumberOfIncorrect += 1;
         }
 
         Toast.makeText(this, messageResID, Toast.LENGTH_SHORT).show();
 
-        if ((mNumberOfCorrect + mNumberofIncorrect) == mQuestionBank.length) {
+        if ((mNumberOfCorrect + mNumberOfIncorrect) == mQuestionBank.length) {
             double mark = ((double) mNumberOfCorrect / (double) mQuestionBank.length) * 100;
             Toast.makeText(MainActivity.this,
                     getString(R.string.amount_of_correct_answers) + Integer.toString(mNumberOfCorrect) + "\n" +
-                            getString(R.string.amount_of_incorrect_answers) + Integer.toString(mNumberofIncorrect) + "\n" +
+                            getString(R.string.amount_of_incorrect_answers) + Integer.toString(mNumberOfIncorrect) + "\n" +
                             getString(R.string.final_mark) + String.format("%.2f", mark) + getString(R.string.percent)
                     , Toast.LENGTH_SHORT).show();
         }
