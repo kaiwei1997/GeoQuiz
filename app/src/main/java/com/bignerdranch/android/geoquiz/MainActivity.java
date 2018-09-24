@@ -1,5 +1,7 @@
 package com.bignerdranch.android.geoquiz;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
+    private static final int REQUEST_CODE_CHEAT = 0;
     private static final String KEY_ANSWER_INDEX = "answered_index";
     private static final String KEY_ANSWER_CORRECT = "correct_question";
     private static final String KEY_ANSWER_INCORRECT = "incorrect_question";
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private int mCurrentIndex = 0;
+
+    private boolean mIsCHeater;
 
     private ArrayList<Integer> mAnsweredQuestions = new ArrayList<>();
 
@@ -127,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
                 Intent intent = CheatActivity.newIntent(MainActivity.this,answerIsTrue);
-                startActivity(intent);
+                startActivityForResult(intent,REQUEST_CODE_CHEAT);
             }
         });
 
@@ -174,8 +179,23 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onDestroy() called");
     }
 
+    @Override
+    protected void onActivityResult(int requetCode, int resultCode, Intent data){
+        if(resultCode != Activity.RESULT_OK){
+            return;
+        }
+
+        if(requetCode == REQUEST_CODE_CHEAT){
+            if(data == null){
+                return;
+            }
+            mIsCHeater = CheatActivity.wasAnswerShown(data);
+        }
+    }
+
     private void nextQuestion() {
         mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+        mIsCHeater = false;
         updateQuestion();
     }
 
@@ -212,12 +232,16 @@ public class MainActivity extends AppCompatActivity {
 
         int messageResID = 0;
 
-        if (userPressedTrue == answerIsTrue) {
-            messageResID = R.string.correct_toast;
-            mNumberOfCorrect += 1;
-        } else {
-            messageResID = R.string.incorrect_toast;
-            mNumberOfIncorrect += 1;
+        if(mIsCHeater){
+            messageResID = R.string.judgment_toast;
+        }else {
+            if (userPressedTrue == answerIsTrue) {
+                messageResID = R.string.correct_toast;
+                mNumberOfCorrect += 1;
+            } else {
+                messageResID = R.string.incorrect_toast;
+                mNumberOfIncorrect += 1;
+            }
         }
 
         Toast.makeText(this, messageResID, Toast.LENGTH_SHORT).show();
