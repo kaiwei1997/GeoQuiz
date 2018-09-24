@@ -1,5 +1,6 @@
 package com.bignerdranch.android.geoquiz;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mTrueButton;
     private Button mFalseButton;
     private Button mResetButton;
+    private Button mCheatButton;
     private ImageButton mPreviousbutton;
     private Button mNextButton;
     private TextView mQuestionTextView;
@@ -77,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
                  myToast.show();
                  **/
 
-                mTrueButton.setClickable(false);
-                mFalseButton.setClickable(false);
+                mTrueButton.setEnabled(false);
+                mFalseButton.setEnabled(false);
                 checkAnswer(true);
                 mAnsweredQuestions.add(mCurrentIndex);
             }
@@ -88,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Toast.makeText(MainActivity.this,R.string.incorrect_toast,Toast.LENGTH_SHORT).show();
-                mTrueButton.setClickable(false);
-                mFalseButton.setClickable(false);
+                mTrueButton.setEnabled(false);
+                mFalseButton.setEnabled(false);
                 checkAnswer(false);
                 mAnsweredQuestions.add(mCurrentIndex);
             }
@@ -116,6 +118,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 clear();
+            }
+        });
+
+        mCheatButton = (Button)findViewById(R.id.cheat_button);
+        mCheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+                Intent intent = CheatActivity.newIntent(MainActivity.this,answerIsTrue);
+                startActivity(intent);
             }
         });
 
@@ -186,12 +198,12 @@ public class MainActivity extends AppCompatActivity {
         int question = mQuestionBank[mCurrentIndex].getTextResId();
         mQuestionTextView.setText(question);
         if (mAnsweredQuestions.contains(mCurrentIndex)) {
-            mTrueButton.setClickable(false);
-            mFalseButton.setClickable(false);
+            mTrueButton.setEnabled(false);
+            mFalseButton.setEnabled(false);
             Toast.makeText(MainActivity.this,R.string.answered_question,Toast.LENGTH_SHORT).show();
         } else {
-            mTrueButton.setClickable(true);
-            mFalseButton.setClickable(true);
+            mTrueButton.setEnabled(true);
+            mFalseButton.setEnabled(true);
         }
     }
 

@@ -18,4 +18,8 @@
     <string name="percent">%</string>
     <string name="reset_button">Reset</string>
     <string name="answered_question">You have answered this question</string>
+    <string name="warning_text">Are you sure you want to do this?</string>
+    <string name="show_answer_button">Show Answer</string>
+    <string name="cheat_button">Cheat!</string>
+    <string name="judgment_toast">CHeating is wrong.</string>
 </resources>
