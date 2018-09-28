@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_ANSWER_INDEX = "answered_index";
     private static final String KEY_ANSWER_CORRECT = "correct_question";
     private static final String KEY_ANSWER_INCORRECT = "incorrect_question";
-    private static  final String KEY_IS_CHEAT = "cheated";
+    private static final String KEY_IS_CHEAT = "cheated";
+    private static final String KEY_CHEAT_BANK = "cheat_bank";
 
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
@@ -45,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private int mCurrentIndex = 0;
 
     private boolean mIsCheater;
+
+    private HashMap<Integer, Boolean> mCheatBankMap = new HashMap<>();
 
     private ArrayList<Integer> mAnsweredQuestions = new ArrayList<>();
 
@@ -62,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
             mAnsweredQuestions = savedInstanceState.getIntegerArrayList(KEY_ANSWER_INDEX);
             mNumberOfCorrect = savedInstanceState.getInt(KEY_ANSWER_CORRECT, 0);
             mNumberOfIncorrect = savedInstanceState.getInt(KEY_ANSWER_INCORRECT, 0);
-            mIsCheater = savedInstanceState.getBoolean(KEY_IS_CHEAT,false);
+            mIsCheater = savedInstanceState.getBoolean(KEY_IS_CHEAT, false);
+            mCheatBankMap = (HashMap<Integer, Boolean>)savedInstanceState.getSerializable(KEY_CHEAT_BANK);
         }
 
         //challenge 2.1
@@ -168,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putInt(KEY_ANSWER_CORRECT, mNumberOfCorrect);
         savedInstanceState.putInt(KEY_ANSWER_INCORRECT, mNumberOfIncorrect);
         savedInstanceState.putBoolean(KEY_IS_CHEAT, mIsCheater);
+        savedInstanceState.putSerializable(KEY_CHEAT_BANK,mCheatBankMap);
     }
 
     @Override
@@ -193,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             mIsCheater = CheatActivity.wasAnswerShown(data);
+            mCheatBankMap.put(mCurrentIndex, mIsCheater);
         }
     }
 
@@ -235,21 +242,22 @@ public class MainActivity extends AppCompatActivity {
 
         int messageResID = 0;
 
-            if (userPressedTrue == answerIsTrue) {
-                if(mIsCheater){
-                    messageResID = R.string.judgment_toast;
-                }else {
-                    messageResID = R.string.correct_toast;
-                }
-                    mNumberOfCorrect += 1;
-            } else {
-                if(mIsCheater){
-                    messageResID = R.string.judgment_toast;
-                }else {
-                    messageResID = R.string.incorrect_toast;
-                }
-                mNumberOfIncorrect += 1;
+        if (mCheatBankMap.get(mCurrentIndex) != null && mCheatBankMap.get(mCurrentIndex)) {
+            messageResID = R.string.judgment_toast;
+            if(answerIsTrue == userPressedTrue){
+                mNumberOfCorrect+=1;
+            }else{
+                mNumberOfIncorrect+=1;
             }
+        }else{
+            if(answerIsTrue == userPressedTrue){
+                mNumberOfCorrect+=1;
+                messageResID = R.string.correct_toast;
+            }else{
+                mNumberOfIncorrect+=1;
+                messageResID = R.string.incorrect_toast;
+            }
+        }
 
         Toast.makeText(this, messageResID, Toast.LENGTH_SHORT).show();
 
@@ -269,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
         mNumberOfCorrect = 0;
         mNumberOfIncorrect = 0;
         mAnsweredQuestions.clear();
+        mCheatBankMap.clear();
         updateQuestion();
         mResetButton.setVisibility(View.INVISIBLE);
     }
