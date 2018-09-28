@@ -42,9 +42,9 @@ public class CheatActivity extends AppCompatActivity {
             mIsCheat = savedInstanceState.getBoolean(KEY_IS_CHEATER);
             mAnswerIsTrue = savedInstanceState.getBoolean(EXTRA_ANSWER_IS_TRUE);
             mAnswerTextView = (TextView)findViewById(R.id.answer_text_view);
-            if((mAnswerIsTrue) && (mIsCheat)){
+            if((mAnswerIsTrue == true) && (mIsCheat == true)){
                 mAnswerTextView.setText(R.string.true_button);
-            } else if ((mAnswerIsTrue == false) && (mIsCheat)){
+            } else if ((mAnswerIsTrue == false) && (mIsCheat == true)){
                 mAnswerTextView.setText(R.string.false_button);
             }
         }else{
@@ -94,7 +94,7 @@ public class CheatActivity extends AppCompatActivity {
         Log.i(TAG, "onSaveInstanceState");
 
         savedInstanceState.putBoolean(KEY_IS_CHEATER, mIsCheat);
-        savedInstanceState.putBoolean(EXTRA_ANSWER_IS_TRUE, mAnswerIsTrue);
+        savedInstanceState.putBoolean(EXTRA_ANSWER_IS_TRUE,mAnswerIsTrue);
     }
 
     @Override
