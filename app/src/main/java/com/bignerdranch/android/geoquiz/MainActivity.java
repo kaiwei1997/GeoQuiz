@@ -13,6 +13,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton mPreviousbutton;
     private Button mNextButton;
     private TextView mQuestionTextView;
+    private TextView mTokenLeft;
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
@@ -32,8 +35,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_ANSWER_INDEX = "answered_index";
     private static final String KEY_ANSWER_CORRECT = "correct_question";
     private static final String KEY_ANSWER_INCORRECT = "incorrect_question";
-    private static final String KEY_IS_CHEAT = "cheated";
     private static final String KEY_CHEAT_BANK = "cheat_bank";
+    private static final String KEY_TOKEN_LEFT = "cheat_token_left";
+
 
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
@@ -53,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private int mNumberOfCorrect = 0;
     private int mNumberOfIncorrect = 0;
 
+    private int mCheatTokenLeft = 3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
             mAnsweredQuestions = savedInstanceState.getIntegerArrayList(KEY_ANSWER_INDEX);
             mNumberOfCorrect = savedInstanceState.getInt(KEY_ANSWER_CORRECT, 0);
             mNumberOfIncorrect = savedInstanceState.getInt(KEY_ANSWER_INCORRECT, 0);
-            mCheatBankMap = (HashMap<Integer, Boolean>)savedInstanceState.getSerializable(KEY_CHEAT_BANK);
+            mCheatBankMap = (HashMap<Integer, Boolean>) savedInstanceState.getSerializable(KEY_CHEAT_BANK);
+            mCheatTokenLeft = savedInstanceState.getInt(KEY_TOKEN_LEFT, 3);
         }
 
         //challenge 2.1
@@ -75,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
                 nextQuestion();
             }
         });
+
+        mTokenLeft = (TextView) findViewById(R.id.cheat_token);
+        mTokenLeft.setText(getString(R.string.cheat_token_left) + String.valueOf(mCheatTokenLeft));
 
         mTrueButton = (Button) findViewById(R.id.true_button);
         mTrueButton.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +136,8 @@ public class MainActivity extends AppCompatActivity {
         mResetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clear();
+                Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -134,15 +145,20 @@ public class MainActivity extends AppCompatActivity {
         mCheatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
-                boolean isCheated;
-                if(mCheatBankMap.get(mCurrentIndex)!=null && mCheatBankMap.get(mCurrentIndex)){
-                    isCheated = true;
-                }else{
-                    isCheated = false;
+                if (mCheatTokenLeft > 0) {
+                    boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+                    boolean isCheated;
+                    if (mCheatBankMap.get(mCurrentIndex) != null && mCheatBankMap.get(mCurrentIndex)) {
+                        isCheated = true;
+                    } else {
+                        isCheated = false;
+                    }
+                    Intent intent = CheatActivity.newIntent(MainActivity.this, answerIsTrue, isCheated);
+                    startActivityForResult(intent, REQUEST_CODE_CHEAT);
+                } else {
+                    mCheatButton.setEnabled(false);
                 }
-                Intent intent = CheatActivity.newIntent(MainActivity.this, answerIsTrue,isCheated);
-                startActivityForResult(intent, REQUEST_CODE_CHEAT);
+
             }
         });
 
@@ -175,7 +191,8 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putIntegerArrayList(KEY_ANSWER_INDEX, mAnsweredQuestions);
         savedInstanceState.putInt(KEY_ANSWER_CORRECT, mNumberOfCorrect);
         savedInstanceState.putInt(KEY_ANSWER_INCORRECT, mNumberOfIncorrect);
-        savedInstanceState.putSerializable(KEY_CHEAT_BANK,mCheatBankMap);
+        savedInstanceState.putSerializable(KEY_CHEAT_BANK, mCheatBankMap);
+        savedInstanceState.putInt(KEY_TOKEN_LEFT, mCheatTokenLeft);
     }
 
     @Override
@@ -201,6 +218,8 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             mCheatBankMap.put(mCurrentIndex, CheatActivity.wasAnswerShown(data));
+            mCheatTokenLeft--;
+            mTokenLeft.setText(getString(R.string.cheat_token_left) + String.valueOf(mCheatTokenLeft));
         }
     }
 
@@ -244,17 +263,17 @@ public class MainActivity extends AppCompatActivity {
 
         if (mCheatBankMap.get(mCurrentIndex) != null && mCheatBankMap.get(mCurrentIndex)) {
             messageResID = R.string.judgment_toast;
-            if(answerIsTrue == userPressedTrue){
-                mNumberOfCorrect+=1;
-            }else{
-                mNumberOfIncorrect+=1;
+            if (answerIsTrue == userPressedTrue) {
+                mNumberOfCorrect += 1;
+            } else {
+                mNumberOfIncorrect += 1;
             }
-        }else{
-            if(answerIsTrue == userPressedTrue){
-                mNumberOfCorrect+=1;
+        } else {
+            if (answerIsTrue == userPressedTrue) {
+                mNumberOfCorrect += 1;
                 messageResID = R.string.correct_toast;
-            }else{
-                mNumberOfIncorrect+=1;
+            } else {
+                mNumberOfIncorrect += 1;
                 messageResID = R.string.incorrect_toast;
             }
         }
@@ -270,15 +289,5 @@ public class MainActivity extends AppCompatActivity {
                     , Toast.LENGTH_SHORT).show();
             mResetButton.setVisibility(View.VISIBLE);
         }
-    }
-
-    private void clear() {
-        mCurrentIndex = 0;
-        mNumberOfCorrect = 0;
-        mNumberOfIncorrect = 0;
-        mAnsweredQuestions.clear();
-        mCheatBankMap.clear();
-        updateQuestion();
-        mResetButton.setVisibility(View.INVISIBLE);
     }
 }
