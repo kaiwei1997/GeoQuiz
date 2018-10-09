@@ -41,6 +41,7 @@ public class CheatActivity extends AppCompatActivity {
         mAnswerIsTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false);
         mIsCheat = getIntent().getBooleanExtra(EXTRA_IS_CHEATED, false);
         mAnswerTextView = (TextView) findViewById(R.id.answer_text_view);
+        mShowAnswerButton = (Button) findViewById(R.id.show_answer_button);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(EXTRA_IS_CHEATED, false)) {
@@ -49,11 +50,10 @@ public class CheatActivity extends AppCompatActivity {
 
         }
 
-        if(mIsCheat ==true){
+        if(mIsCheat ==true) {
             cheat();
         }
 
-        mShowAnswerButton = (Button) findViewById(R.id.show_answer_button);
         mShowAnswerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,6 +104,7 @@ public class CheatActivity extends AppCompatActivity {
         mIsCheat = true;
         mAnswerTextView.setText(mAnswerIsTrue ? R.string.true_button : R.string.false_button);
         setAnswerShownResult(true);
+        mShowAnswerButton.setEnabled(false);
     }
     private void setAnswerShownResult(boolean isAnswerShown) {
         Intent data = new Intent();
