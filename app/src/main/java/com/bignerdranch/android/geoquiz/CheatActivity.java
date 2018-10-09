@@ -43,10 +43,13 @@ public class CheatActivity extends AppCompatActivity {
             mAnswerIsTrue = savedInstanceState.getBoolean(EXTRA_ANSWER_IS_TRUE);
             mAnswerTextView = (TextView) findViewById(R.id.answer_text_view);
             if ((mAnswerIsTrue == true) && (mIsCheat == true)) {
-                mAnswerTextView.setText(R.string.true_button);
+                mAnswerTextView.setText("True" + String.valueOf(mIsCheat));
+                setAnswerShownResult(true);
             } else if ((mAnswerIsTrue == false) && (mIsCheat == true)) {
                 mAnswerTextView.setText(R.string.false_button);
+                setAnswerShownResult(true);
             }
+
         } else {
             mIsCheat = false;
             setAnswerShownResult(false);
@@ -96,7 +99,6 @@ public class CheatActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         Log.i(TAG, "onSaveInstanceState");
-
         savedInstanceState.putBoolean(EXTRA_IS_CHEATED, mIsCheat);
         savedInstanceState.putBoolean(EXTRA_ANSWER_IS_TRUE, mAnswerIsTrue);
     }
