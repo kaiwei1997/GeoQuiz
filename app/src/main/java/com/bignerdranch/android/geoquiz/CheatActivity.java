@@ -17,7 +17,7 @@ public class CheatActivity extends AppCompatActivity {
     private static final String TAG = "CheatActivity";
 
     private boolean mAnswerIsTrue;
-    private boolean mIsCheat;
+    private boolean mIsCheat = false;
 
     private TextView mAnswerTextView;
     private Button mShowAnswerButton;
@@ -38,43 +38,28 @@ public class CheatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cheat);
 
-        if (savedInstanceState != null) {
-            mIsCheat = savedInstanceState.getBoolean(EXTRA_IS_CHEATED);
-            mAnswerIsTrue = savedInstanceState.getBoolean(EXTRA_ANSWER_IS_TRUE);
-            mAnswerTextView = (TextView) findViewById(R.id.answer_text_view);
-            if ((mAnswerIsTrue == true) && (mIsCheat == true)) {
-                mAnswerTextView.setText("True" + String.valueOf(mIsCheat));
-                setAnswerShownResult(true);
-            } else if ((mAnswerIsTrue == false) && (mIsCheat == true)) {
-                mAnswerTextView.setText(R.string.false_button);
-                setAnswerShownResult(true);
-            }
-
-        } else {
-            mIsCheat = false;
-            setAnswerShownResult(false);
-        }
-
         mAnswerIsTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false);
         mIsCheat = getIntent().getBooleanExtra(EXTRA_IS_CHEATED, false);
         mAnswerTextView = (TextView) findViewById(R.id.answer_text_view);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getBoolean(EXTRA_IS_CHEATED, false)) {
+                cheat();
+            }
+
+        }
+
+        if(mIsCheat ==true){
+            cheat();
+        }
+
         mShowAnswerButton = (Button) findViewById(R.id.show_answer_button);
         mShowAnswerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mAnswerIsTrue) {
-                    mAnswerTextView.setText(R.string.true_button);
-                } else {
-                    mAnswerTextView.setText(R.string.false_button);
-                }
-                setAnswerShownResult(true);
-                mIsCheat = true;
+                cheat();
             }
         });
-        if(mIsCheat ==true){
-            mShowAnswerButton.callOnClick();
-            mShowAnswerButton.setEnabled(false);
-        }
     }
 
     @Override
@@ -115,6 +100,11 @@ public class CheatActivity extends AppCompatActivity {
         Log.d(TAG, "onDestroy() called");
     }
 
+    private void cheat() {
+        mIsCheat = true;
+        mAnswerTextView.setText(mAnswerIsTrue ? R.string.true_button : R.string.false_button);
+        setAnswerShownResult(true);
+    }
     private void setAnswerShownResult(boolean isAnswerShown) {
         Intent data = new Intent();
         data.putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown);
