@@ -16,6 +16,8 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
@@ -73,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
             mCheatBankMap = (HashMap<Integer, Boolean>) savedInstanceState.getSerializable(KEY_CHEAT_BANK);
             mCheatTokenLeft = savedInstanceState.getInt(KEY_TOKEN_LEFT, 3);
         }
+
+        shuffleQuestion();
 
         //challenge 2.1
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -240,6 +244,16 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mCurrentIndex = mQuestionBank.length - 1;
             updateQuestion();
+        }
+    }
+
+    private void shuffleQuestion(){
+        for(int i =0; i <mQuestionBank.length; i++){
+            int index = (int)(Math.random() * mQuestionBank.length);
+
+            Question temp = mQuestionBank[i];
+            mQuestionBank[i] = mQuestionBank[index];
+            mQuestionBank[index] = temp;
         }
     }
 
