@@ -46,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
     private int mCurrentIndex = 0;
 
-    private boolean mIsCheater;
-
     private HashMap<Integer, Boolean> mCheatBankMap = new HashMap<>();
 
     private ArrayList<Integer> mAnsweredQuestions = new ArrayList<>();
@@ -66,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
             mAnsweredQuestions = savedInstanceState.getIntegerArrayList(KEY_ANSWER_INDEX);
             mNumberOfCorrect = savedInstanceState.getInt(KEY_ANSWER_CORRECT, 0);
             mNumberOfIncorrect = savedInstanceState.getInt(KEY_ANSWER_INCORRECT, 0);
-            mIsCheater = savedInstanceState.getBoolean(KEY_IS_CHEAT, false);
             mCheatBankMap = (HashMap<Integer, Boolean>)savedInstanceState.getSerializable(KEY_CHEAT_BANK);
         }
 
@@ -138,7 +135,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
-                Intent intent = CheatActivity.newIntent(MainActivity.this, answerIsTrue);
+                boolean isCheated;
+                if(mCheatBankMap.get(mCurrentIndex)!=null && mCheatBankMap.get(mCurrentIndex)){
+                    isCheated = true;
+                }else{
+                    isCheated = false;
+                }
+                Intent intent = CheatActivity.newIntent(MainActivity.this, answerIsTrue,isCheated);
                 startActivityForResult(intent, REQUEST_CODE_CHEAT);
             }
         });
@@ -172,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putIntegerArrayList(KEY_ANSWER_INDEX, mAnsweredQuestions);
         savedInstanceState.putInt(KEY_ANSWER_CORRECT, mNumberOfCorrect);
         savedInstanceState.putInt(KEY_ANSWER_INCORRECT, mNumberOfIncorrect);
-        savedInstanceState.putBoolean(KEY_IS_CHEAT, mIsCheater);
         savedInstanceState.putSerializable(KEY_CHEAT_BANK,mCheatBankMap);
     }
 
@@ -198,14 +200,12 @@ public class MainActivity extends AppCompatActivity {
             if (data == null) {
                 return;
             }
-            mIsCheater = CheatActivity.wasAnswerShown(data);
-            mCheatBankMap.put(mCurrentIndex, mIsCheater);
+            mCheatBankMap.put(mCurrentIndex, CheatActivity.wasAnswerShown(data));
         }
     }
 
     private void nextQuestion() {
         mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
-        mIsCheater = false;
         updateQuestion();
     }
 
