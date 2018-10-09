@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mFalseButton;
     private Button mResetButton;
     private Button mCheatButton;
-    private ImageButton mPreviousbutton;
+    private ImageButton mPreviousButton;
     private Button mNextButton;
     private TextView mQuestionTextView;
     private TextView mTokenLeft;
@@ -124,8 +124,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mPreviousbutton = (ImageButton) findViewById(R.id.previous_button);
-        mPreviousbutton.setOnClickListener(new View.OnClickListener() {
+        mPreviousButton = (ImageButton) findViewById(R.id.previous_button);
+        mPreviousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 previousQuestion();
