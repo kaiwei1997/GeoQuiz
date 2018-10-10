@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_ANSWER_INCORRECT = "incorrect_question";
     private static final String KEY_CHEAT_BANK = "cheat_bank";
     private static final String KEY_TOKEN_LEFT = "cheat_token_left";
-
+    private static final String KEY_QUENTION_ARRAY = "question_array";
 
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
@@ -75,8 +75,6 @@ public class MainActivity extends AppCompatActivity {
             mCheatBankMap = (HashMap<Integer, Boolean>) savedInstanceState.getSerializable(KEY_CHEAT_BANK);
             mCheatTokenLeft = savedInstanceState.getInt(KEY_TOKEN_LEFT, 3);
         }
-
-        shuffleQuestion();
 
         //challenge 2.1
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -247,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void shuffleQuestion(){
+    /**private void shuffleQuestion(){
         for(int i =0; i <mQuestionBank.length; i++){
             int index = (int)(Math.random() * mQuestionBank.length);
 
@@ -255,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
             mQuestionBank[i] = mQuestionBank[index];
             mQuestionBank[index] = temp;
         }
-    }
+    }**/
 
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getTextResId();
