@@ -5,6 +5,30 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="top|left">
+
+        <TextView
+            android:id="@+id/text_view_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:text="@string/score"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/text_view_question_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:text="@string/no_answered_question"
+            android:textColor="@android:color/black" />
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/question_text_view"
         android:layout_width="wrap_content"

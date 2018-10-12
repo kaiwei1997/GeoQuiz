@@ -38,10 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_CHEAT = 0;
     private static final String KEY_ANSWER_INDEX = "answered_index";
     private static final String KEY_ANSWER_CORRECT = "correct_question";
-    private static final String KEY_ANSWER_INCORRECT = "incorrect_question";
     private static final String KEY_CHEAT_BANK = "cheat_bank";
     private static final String KEY_TOKEN_LEFT = "cheat_token_left";
-    private static final String KEY_QUENTION_ARRAY = "question_array";
+    private static final String KEY_QUESTION_TOTAL = "no_total_question";
 
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
@@ -76,15 +75,16 @@ public class MainActivity extends AppCompatActivity {
             mNumberOfCorrect = savedInstanceState.getInt(KEY_ANSWER_CORRECT, 0);
             mCheatBankMap = (HashMap<Integer, Boolean>) savedInstanceState.getSerializable(KEY_CHEAT_BANK);
             mCheatTokenLeft = savedInstanceState.getInt(KEY_TOKEN_LEFT, 3);
+            questionCountTotal = savedInstanceState.getInt(KEY_QUESTION_TOTAL,0);
         }
 
         questionCountTotal = mQuestionBank.length;
 
         answered_question = (TextView) findViewById(R.id.text_view_question_count);
-        answered_question.setText(getString(R.string.no_answered_question) + "0/" + String.valueOf(questionCountTotal));
+        answered_question.setText(getString(R.string.no_answered_question) + String.valueOf(mAnsweredQuestions.size()) +"/" + String.valueOf(questionCountTotal));
 
         score = (TextView)findViewById(R.id.text_view_score);
-        score.setText(getString(R.string.score) + "0");
+        score.setText(getString(R.string.score) + mNumberOfCorrect);
 
         //challenge 2.1
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -202,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putInt(KEY_ANSWER_CORRECT, mNumberOfCorrect);
         savedInstanceState.putSerializable(KEY_CHEAT_BANK, mCheatBankMap);
         savedInstanceState.putInt(KEY_TOKEN_LEFT, mCheatTokenLeft);
+        savedInstanceState.putInt(KEY_QUESTION_TOTAL, questionCountTotal);
     }
 
     @Override
