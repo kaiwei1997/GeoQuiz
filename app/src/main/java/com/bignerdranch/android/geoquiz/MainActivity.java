@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mNextButton;
     private TextView mQuestionTextView;
     private TextView mTokenLeft;
+    private TextView score;
     private TextView answered_question;
 
     private static final String TAG = "QuizActivity";
@@ -57,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Integer> mAnsweredQuestions = new ArrayList<>();
 
-    private int questionCounter;
     private int questionCountTotal;
 
     private int mNumberOfCorrect = 0;
@@ -81,6 +81,10 @@ public class MainActivity extends AppCompatActivity {
         questionCountTotal = mQuestionBank.length;
 
         answered_question = (TextView) findViewById(R.id.text_view_question_count);
+        answered_question.setText(getString(R.string.no_answered_question) + "0/" + String.valueOf(questionCountTotal));
+
+        score = (TextView)findViewById(R.id.text_view_score);
+        score.setText(getString(R.string.score) + "0");
 
         //challenge 2.1
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -264,10 +268,12 @@ public class MainActivity extends AppCompatActivity {
         if (mAnsweredQuestions.contains(mCurrentIndex)) {
             mTrueButton.setEnabled(false);
             mFalseButton.setEnabled(false);
+            mCheatButton.setEnabled(false);
             Toast.makeText(MainActivity.this, R.string.answered_question, Toast.LENGTH_SHORT).show();
         } else {
             mTrueButton.setEnabled(true);
             mFalseButton.setEnabled(true);
+            mCheatButton.setEnabled(true);
         }
     }
 
@@ -294,7 +300,11 @@ public class MainActivity extends AppCompatActivity {
 
         Toast.makeText(this, messageResID, Toast.LENGTH_SHORT).show();
 
-        answered_question.setText(String.valueOf(mAnsweredQuestions.size()));
+        score.setText(getString(R.string.score) + String.valueOf(mNumberOfCorrect));
+
+        answered_question.setText(getString(R.string.no_answered_question) +
+                String.valueOf(mAnsweredQuestions.size()) +
+                "/" + String.valueOf(questionCountTotal));
 
         if (mQuestionBank.length == mAnsweredQuestions.size()) {
             double mark = ((double) mNumberOfCorrect / (double) mQuestionBank.length) * 100;
@@ -303,6 +313,7 @@ public class MainActivity extends AppCompatActivity {
                             getString(R.string.final_mark) + String.format("%.2f", mark) + getString(R.string.percent)
                     , Toast.LENGTH_SHORT).show();
             mResetButton.setVisibility(View.VISIBLE);
+            mCheatButton.setEnabled(false);
         }
     }
 
