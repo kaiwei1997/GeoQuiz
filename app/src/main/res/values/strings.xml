@@ -25,4 +25,6 @@
     <string name="judgment_toast">Cheating is wrong.</string>
     <string name="cheat_token_left">Token Left: </string>
     <string name="high_score">High Score: </string>
+    <string name="score">Score: 0</string>
+    <string name="no_answered_question">Question: 1/x</string>
 </resources>

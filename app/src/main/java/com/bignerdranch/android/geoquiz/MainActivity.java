@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mNextButton;
     private TextView mQuestionTextView;
     private TextView mTokenLeft;
+    private TextView answered_question;
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
@@ -56,8 +57,10 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Integer> mAnsweredQuestions = new ArrayList<>();
 
+    private int questionCounter;
+    private int questionCountTotal;
+
     private int mNumberOfCorrect = 0;
-    private int mNumberOfIncorrect = 0;
 
     private int mCheatTokenLeft = 3;
 
@@ -71,10 +74,13 @@ public class MainActivity extends AppCompatActivity {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
             mAnsweredQuestions = savedInstanceState.getIntegerArrayList(KEY_ANSWER_INDEX);
             mNumberOfCorrect = savedInstanceState.getInt(KEY_ANSWER_CORRECT, 0);
-            mNumberOfIncorrect = savedInstanceState.getInt(KEY_ANSWER_INCORRECT, 0);
             mCheatBankMap = (HashMap<Integer, Boolean>) savedInstanceState.getSerializable(KEY_CHEAT_BANK);
             mCheatTokenLeft = savedInstanceState.getInt(KEY_TOKEN_LEFT, 3);
         }
+
+        questionCountTotal = mQuestionBank.length;
+
+        answered_question = (TextView) findViewById(R.id.text_view_question_count);
 
         //challenge 2.1
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -103,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
                 mTrueButton.setEnabled(false);
                 mFalseButton.setEnabled(false);
                 checkAnswer(true);
-                mAnsweredQuestions.add(mCurrentIndex);
             }
         });
         mFalseButton = (Button) findViewById(R.id.false_button);
@@ -114,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
                 mTrueButton.setEnabled(false);
                 mFalseButton.setEnabled(false);
                 checkAnswer(false);
-                mAnsweredQuestions.add(mCurrentIndex);
             }
         });
 
@@ -192,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
         savedInstanceState.putIntegerArrayList(KEY_ANSWER_INDEX, mAnsweredQuestions);
         savedInstanceState.putInt(KEY_ANSWER_CORRECT, mNumberOfCorrect);
-        savedInstanceState.putInt(KEY_ANSWER_INCORRECT, mNumberOfIncorrect);
         savedInstanceState.putSerializable(KEY_CHEAT_BANK, mCheatBankMap);
         savedInstanceState.putInt(KEY_TOKEN_LEFT, mCheatTokenLeft);
     }
@@ -273,30 +276,30 @@ public class MainActivity extends AppCompatActivity {
 
         int messageResID = 0;
 
+        mAnsweredQuestions.add(mCurrentIndex);
+
         if (mCheatBankMap.get(mCurrentIndex) != null && mCheatBankMap.get(mCurrentIndex)) {
             messageResID = R.string.judgment_toast;
             if (answerIsTrue == userPressedTrue) {
                 mNumberOfCorrect += 1;
-            } else {
-                mNumberOfIncorrect += 1;
             }
         } else {
             if (answerIsTrue == userPressedTrue) {
                 mNumberOfCorrect += 1;
                 messageResID = R.string.correct_toast;
             } else {
-                mNumberOfIncorrect += 1;
                 messageResID = R.string.incorrect_toast;
             }
         }
 
         Toast.makeText(this, messageResID, Toast.LENGTH_SHORT).show();
 
-        if ((mNumberOfCorrect + mNumberOfIncorrect) == mQuestionBank.length) {
+        answered_question.setText(String.valueOf(mAnsweredQuestions.size()));
+
+        if (mQuestionBank.length == mAnsweredQuestions.size()) {
             double mark = ((double) mNumberOfCorrect / (double) mQuestionBank.length) * 100;
             Toast.makeText(MainActivity.this,
                     getString(R.string.amount_of_correct_answers) + Integer.toString(mNumberOfCorrect) + "\n" +
-                            getString(R.string.amount_of_incorrect_answers) + Integer.toString(mNumberOfIncorrect) + "\n" +
                             getString(R.string.final_mark) + String.format("%.2f", mark) + getString(R.string.percent)
                     , Toast.LENGTH_SHORT).show();
             mResetButton.setVisibility(View.VISIBLE);
