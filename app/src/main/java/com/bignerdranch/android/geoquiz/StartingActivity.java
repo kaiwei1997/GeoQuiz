@@ -27,6 +27,5 @@ public class StartingActivity extends AppCompatActivity {
     private void start_quiz(){
         Intent intent = new Intent(StartingActivity.this, MainActivity.class);
         startActivity(intent);
-        finish();
     }
 }

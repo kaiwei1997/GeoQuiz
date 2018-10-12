@@ -302,4 +302,8 @@ public class MainActivity extends AppCompatActivity {
             mResetButton.setVisibility(View.VISIBLE);
         }
     }
+
+    private void resetQuiz(){
+
+    }
 }
