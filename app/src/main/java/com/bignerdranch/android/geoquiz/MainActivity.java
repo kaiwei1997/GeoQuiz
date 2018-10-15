@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_TOKEN_LEFT = "cheat_token_left";
     private static final String KEY_QUESTION_TOTAL = "no_total_question";
     private static final String KEY_ANSWERED_QUESTION = "no_answered_question";
+    private static final String KEY_TIME_LEFT = "time_left";
 
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int mNumberOfCorrect = 0;
 
-    private int mNumberOfMissQuestion =0;
+    private int mNumberOfMissQuestion = 0;
 
     private int mCheatTokenLeft = 3;
 
@@ -94,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
 
         mResetButton = (Button) findViewById(R.id.reset_button);
         answered_question = (TextView) findViewById(R.id.text_view_question_count);
-        score = (TextView)findViewById(R.id.text_view_score);
-        tv_countDown = (TextView)findViewById(R.id.count_down_timer);
+        score = (TextView) findViewById(R.id.text_view_score);
+        tv_countDown = (TextView) findViewById(R.id.count_down_timer);
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
         mTokenLeft = (TextView) findViewById(R.id.cheat_token);
         mTrueButton = (Button) findViewById(R.id.true_button);
@@ -114,15 +115,23 @@ public class MainActivity extends AppCompatActivity {
             mNumberOfCorrect = savedInstanceState.getInt(KEY_ANSWER_CORRECT, 0);
             mCheatBankMap = (HashMap<Integer, Boolean>) savedInstanceState.getSerializable(KEY_CHEAT_BANK);
             mCheatTokenLeft = savedInstanceState.getInt(KEY_TOKEN_LEFT, 3);
-            questionCountTotal = savedInstanceState.getInt(KEY_QUESTION_TOTAL,0);
-            noAnsweredQuestion = savedInstanceState.getInt(KEY_ANSWERED_QUESTION,0);
+            questionCountTotal = savedInstanceState.getInt(KEY_QUESTION_TOTAL, 0);
+            noAnsweredQuestion = savedInstanceState.getInt(KEY_ANSWERED_QUESTION, 0);
+            mTimeLeftInMills = savedInstanceState.getLong(KEY_TIME_LEFT, 0);
 
-            if(questionCountTotal == noAnsweredQuestion){
+            if (questionCountTotal == noAnsweredQuestion) {
                 mResetButton.setVisibility(View.VISIBLE);
+            }
+
+            if (!mAnsweredQuestions.contains(mCurrentIndex)) {
+                startCountDown();
+                Toast.makeText(MainActivity.this, String.valueOf(mTimeLeftInMills), Toast.LENGTH_SHORT).show();
+            } else {
+                updateCountDownTimerText();
             }
         }
 
-        answered_question.setText(getString(R.string.no_answered_question) + String.valueOf(mAnsweredQuestions.size()) +"/" + String.valueOf(questionCountTotal));
+        answered_question.setText(getString(R.string.no_answered_question) + String.valueOf(mAnsweredQuestions.size()) + "/" + String.valueOf(questionCountTotal));
         tv_missedQuestion.setText(getString(R.string.no_miss_question) + String.valueOf(mNumberOfMissQuestion));
         score.setText(getString(R.string.score) + mNumberOfCorrect);
 
@@ -146,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                  myToast.setGravity(Gravity.TOP,100,100);
                  myToast.show();
                  **/
-                checkAnswer(true);
+                checkAnswer(String.valueOf(true));
             }
         });
 
@@ -154,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Toast.makeText(MainActivity.this,R.string.incorrect_toast,Toast.LENGTH_SHORT).show();
-                checkAnswer(false);
+                checkAnswer(String.valueOf(false));
             }
         });
 
@@ -203,49 +212,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart() called");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume() called");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause() called");
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        Log.i(TAG, "onSaveInstanceState");
-        savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
-        savedInstanceState.putIntegerArrayList(KEY_ANSWER_INDEX, mAnsweredQuestions);
-        savedInstanceState.putInt(KEY_ANSWER_CORRECT, mNumberOfCorrect);
-        savedInstanceState.putSerializable(KEY_CHEAT_BANK, mCheatBankMap);
-        savedInstanceState.putInt(KEY_TOKEN_LEFT, mCheatTokenLeft);
-        savedInstanceState.putInt(KEY_QUESTION_TOTAL, questionCountTotal);
-        savedInstanceState.putInt(KEY_ANSWERED_QUESTION, noAnsweredQuestion);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop() called");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy() called");
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) {
             return;
@@ -263,15 +229,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void nextQuestion() {
         mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+        if(mCountDownTimer!=null){
+            mCountDownTimer.cancel();
+        }
         updateQuestion();
     }
 
 
     //challenge 2.2
     private void previousQuestion() {
-
         /**mCurrentIndex = (5 + mCurrentIndex) % mQuestionBank.length;
          updateQuestion();**/
+        if(mCountDownTimer!=null){
+            mCountDownTimer.cancel();
+        }
         if (mCurrentIndex > 0) {
             mCurrentIndex -= 1;
             updateQuestion();
@@ -281,15 +252,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**private void shuffleQuestion(){
-        for(int i =0; i <mQuestionBank.length; i++){
-            int index = (int)(Math.random() * mQuestionBank.length);
-
-            Question temp = mQuestionBank[i];
-            mQuestionBank[i] = mQuestionBank[index];
-            mQuestionBank[index] = temp;
-        }
-    }**/
+    /**
+     * private void shuffleQuestion(){
+     * for(int i =0; i <mQuestionBank.length; i++){
+     * int index = (int)(Math.random() * mQuestionBank.length);
+     * <p>
+     * Question temp = mQuestionBank[i];
+     * mQuestionBank[i] = mQuestionBank[index];
+     * mQuestionBank[index] = temp;
+     * }
+     * }
+     **/
 
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getTextResId();
@@ -309,8 +282,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void startCountDown(){
-        mCountDownTimer = new CountDownTimer(mTimeLeftInMills,1000) {
+    private void startCountDown() {
+        mCountDownTimer = new CountDownTimer(mTimeLeftInMills, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mTimeLeftInMills = millisUntilFinished;
@@ -321,26 +294,26 @@ public class MainActivity extends AppCompatActivity {
             public void onFinish() {
                 mTimeLeftInMills = 0;
                 updateCountDownTimerText();
-                checkAnswer(Boolean.valueOf(null));
+                checkAnswer(null);
             }
         }.start();
     }
 
-    private void updateCountDownTimerText(){
+    private void updateCountDownTimerText() {
         int minutes = (int) (mTimeLeftInMills / 1000) / 60;
         int seconds = (int) (mTimeLeftInMills / 1000) % 60;
 
-        String time_formatted = String.format(Locale.getDefault(), "%02d:%02d", minutes,seconds);
+        String time_formatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
         tv_countDown.setText(time_formatted);
 
-        if(mTimeLeftInMills < 5000){
+        if (mTimeLeftInMills < 5000) {
             tv_countDown.setTextColor(Color.RED);
-        }else{
+        } else {
             tv_countDown.setTextColor(textColorDefaultCountDown);
         }
     }
 
-    private void checkAnswer(boolean userPressedTrue) {
+    private void checkAnswer(String userPressedTrue) {
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
 
         int messageResID = 0;
@@ -354,20 +327,22 @@ public class MainActivity extends AppCompatActivity {
         mFalseButton.setEnabled(false);
         mCheatButton.setEnabled(false);
 
-        if (mCheatBankMap.get(mCurrentIndex) != null && mCheatBankMap.get(mCurrentIndex)) {
-            messageResID = R.string.judgment_toast;
-            if (answerIsTrue == userPressedTrue) {
-                mNumberOfCorrect += 1;
-            }
-        } else {
-            if (answerIsTrue == userPressedTrue) {
-                mNumberOfCorrect += 1;
-                messageResID = R.string.correct_toast;
-            } else if(userPressedTrue == Boolean.valueOf(null)){
-                messageResID = R.string.miss_question;
-                mNumberOfMissQuestion +=1;
-            } else{
-                messageResID = R.string.incorrect_toast;
+        if(userPressedTrue == null){
+            messageResID = R.string.miss_question;
+            mNumberOfMissQuestion += 1;
+        }else {
+            if (mCheatBankMap.get(mCurrentIndex) != null && mCheatBankMap.get(mCurrentIndex)) {
+                messageResID = R.string.judgment_toast;
+                if (String.valueOf(answerIsTrue) == userPressedTrue) {
+                    mNumberOfCorrect += 1;
+                }
+            } else {
+                if (String.valueOf(answerIsTrue) == userPressedTrue) {
+                    messageResID = R.string.correct_toast;
+                    mNumberOfCorrect += 1;
+                } else {
+                    messageResID = R.string.incorrect_toast;
+                }
             }
         }
 
@@ -391,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void resetQuiz(){
+    private void resetQuiz() {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_SCORE, mNumberOfCorrect);
         setResult(RESULT_OK, intent);
@@ -400,13 +375,62 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed(){
-        if(mBackPressedTime + 2000 > System.currentTimeMillis()){
+    public void onBackPressed() {
+        if (mBackPressedTime + 2000 > System.currentTimeMillis()) {
             resetQuiz();
-        }else{
+        } else {
             Toast.makeText(MainActivity.this, R.string.back_pressed, Toast.LENGTH_SHORT).show();
         }
 
         mBackPressedTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i(TAG, "onSaveInstanceState");
+        savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+        savedInstanceState.putIntegerArrayList(KEY_ANSWER_INDEX, mAnsweredQuestions);
+        savedInstanceState.putInt(KEY_ANSWER_CORRECT, mNumberOfCorrect);
+        savedInstanceState.putSerializable(KEY_CHEAT_BANK, mCheatBankMap);
+        savedInstanceState.putInt(KEY_TOKEN_LEFT, mCheatTokenLeft);
+        savedInstanceState.putInt(KEY_QUESTION_TOTAL, questionCountTotal);
+        savedInstanceState.putInt(KEY_ANSWERED_QUESTION, noAnsweredQuestion);
+        savedInstanceState.putLong(KEY_TIME_LEFT, mTimeLeftInMills);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart() called");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume() called");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause() called");
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop() called");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy() called");
+
+        if (mCountDownTimer != null) {
+            mCountDownTimer.cancel();
+        }
     }
 }
