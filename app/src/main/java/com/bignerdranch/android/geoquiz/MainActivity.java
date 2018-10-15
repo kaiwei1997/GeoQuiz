@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView score;
     private TextView answered_question;
     private TextView tv_countDown;
+    private TextView tv_missedQuestion;
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         mPreviousButton = (ImageButton) findViewById(R.id.previous_button);
         mResetButton = (Button) findViewById(R.id.reset_button);
         mCheatButton = (Button) findViewById(R.id.cheat_button);
+        tv_missedQuestion = (TextView) findViewById(R.id.missed_question);
 
         textColorDefaultCountDown = tv_countDown.getTextColors();
 
@@ -121,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         answered_question.setText(getString(R.string.no_answered_question) + String.valueOf(mAnsweredQuestions.size()) +"/" + String.valueOf(questionCountTotal));
-
+        tv_missedQuestion.setText(getString(R.string.no_miss_question) + String.valueOf(mNumberOfMissQuestion));
         score.setText(getString(R.string.score) + mNumberOfCorrect);
 
         //challenge 2.1
@@ -372,6 +374,8 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, messageResID, Toast.LENGTH_SHORT).show();
 
         score.setText(getString(R.string.score) + String.valueOf(mNumberOfCorrect));
+
+        tv_missedQuestion.setText(getString(R.string.no_miss_question) + String.valueOf(mNumberOfMissQuestion));
 
         answered_question.setText(getString(R.string.no_answered_question) +
                 String.valueOf(noAnsweredQuestion) +
