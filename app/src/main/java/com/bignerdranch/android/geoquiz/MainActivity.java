@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTokenLeft;
     private TextView score;
     private TextView answered_question;
-    private TextView countDown;
+    private TextView tv_countDown;
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
@@ -70,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
     private int mNumberOfCorrect = 0;
 
+    private int mNumberOfMissQuestion =0;
+
     private int mCheatTokenLeft = 3;
 
     private long mBackPressedTime;
@@ -90,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         mResetButton = (Button) findViewById(R.id.reset_button);
         answered_question = (TextView) findViewById(R.id.text_view_question_count);
         score = (TextView)findViewById(R.id.text_view_score);
-        countDown = (TextView)findViewById(R.id.count_down_timer);
+        tv_countDown = (TextView)findViewById(R.id.count_down_timer);
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
         mTokenLeft = (TextView) findViewById(R.id.cheat_token);
         mTrueButton = (Button) findViewById(R.id.true_button);
@@ -100,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         mResetButton = (Button) findViewById(R.id.reset_button);
         mCheatButton = (Button) findViewById(R.id.cheat_button);
 
-        textColorDefaultCountDown = countDown.getTextColors();
+        textColorDefaultCountDown = tv_countDown.getTextColors();
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
@@ -297,6 +301,40 @@ public class MainActivity extends AppCompatActivity {
             mTrueButton.setEnabled(true);
             mFalseButton.setEnabled(true);
             mCheatButton.setEnabled(true);
+
+            mTimeLeftInMills = COUNTDOWN_IN_MILLS;
+            startCountDown();
+        }
+    }
+
+    private void startCountDown(){
+        mCountDownTimer = new CountDownTimer(mTimeLeftInMills,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mTimeLeftInMills = millisUntilFinished;
+                updateCountDownTimerText();
+            }
+
+            @Override
+            public void onFinish() {
+                mTimeLeftInMills = 0;
+                updateCountDownTimerText();
+                checkAnswer(Boolean.valueOf(null));
+            }
+        }.start();
+    }
+
+    private void updateCountDownTimerText(){
+        int minutes = (int) (mTimeLeftInMills / 1000) / 60;
+        int seconds = (int) (mTimeLeftInMills / 1000) % 60;
+
+        String time_formatted = String.format(Locale.getDefault(), "%02d:%02d", minutes,seconds);
+        tv_countDown.setText(time_formatted);
+
+        if(mTimeLeftInMills < 5000){
+            tv_countDown.setTextColor(Color.RED);
+        }else{
+            tv_countDown.setTextColor(textColorDefaultCountDown);
         }
     }
 
@@ -304,6 +342,8 @@ public class MainActivity extends AppCompatActivity {
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
 
         int messageResID = 0;
+
+        mCountDownTimer.cancel();
 
         mAnsweredQuestions.add(mCurrentIndex);
         noAnsweredQuestion = mAnsweredQuestions.size();
@@ -321,7 +361,10 @@ public class MainActivity extends AppCompatActivity {
             if (answerIsTrue == userPressedTrue) {
                 mNumberOfCorrect += 1;
                 messageResID = R.string.correct_toast;
-            } else {
+            } else if(userPressedTrue == Boolean.valueOf(null)){
+                messageResID = R.string.miss_question;
+                mNumberOfMissQuestion +=1;
+            } else{
                 messageResID = R.string.incorrect_toast;
             }
         }

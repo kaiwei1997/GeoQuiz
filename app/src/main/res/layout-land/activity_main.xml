@@ -26,6 +26,14 @@
             android:layout_gravity="top"
             android:text="@string/no_answered_question"
             android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/missed_question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text= "@string/no_miss_question"
+            android:textColor="@color/colorText"/>
+
         <TextView
             android:id="@+id/count_down_timer"
             android:layout_width="wrap_content"

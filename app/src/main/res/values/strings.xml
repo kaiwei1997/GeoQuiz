@@ -13,6 +13,7 @@
     <string name="previous_button">Previous</string>
     <string name="correct_toast">Correct!</string>
     <string name="incorrect_toast">Incorrect!</string>
+    <string name="miss_question">You have miss this question</string>
     <string name="amount_of_correct_answers">Correct: </string>
     <string name="amount_of_incorrect_answers">Incorrect: </string>
     <string name="final_mark">Final mark: </string>
@@ -28,4 +29,5 @@
     <string name="score">Score: </string>
     <string name="no_answered_question">Answered Question: </string>
     <string name="back_pressed">Press back again to quit geo quiz</string>
+    <string name="no_miss_question">Number of missed question: </string>
 </resources>
