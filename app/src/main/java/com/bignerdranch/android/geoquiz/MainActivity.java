@@ -125,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
 
             if (!mAnsweredQuestions.contains(mCurrentIndex)) {
                 startCountDown();
-                Toast.makeText(MainActivity.this, String.valueOf(mTimeLeftInMills), Toast.LENGTH_SHORT).show();
             } else {
                 updateCountDownTimerText();
             }
