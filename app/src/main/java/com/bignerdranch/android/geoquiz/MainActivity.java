@@ -3,6 +3,8 @@ package com.bignerdranch.android.geoquiz;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_SCORE = "extra_score";
+    private static final long COUNTDOWN_IN_MILLS = 15000;
 
     private Button mTrueButton;
     private Button mFalseButton;
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTokenLeft;
     private TextView score;
     private TextView answered_question;
+    private TextView countDown;
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
@@ -70,13 +74,31 @@ public class MainActivity extends AppCompatActivity {
 
     private long mBackPressedTime;
 
+    private ColorStateList textColorDefaultCountDown;
+
+    private CountDownTimer mCountDownTimer;
+    private long mTimeLeftInMills;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate(Bundle) called");
         setContentView(R.layout.activity_main);
 
+        questionCountTotal = mQuestionBank.length;
+
         mResetButton = (Button) findViewById(R.id.reset_button);
+        answered_question = (TextView) findViewById(R.id.text_view_question_count);
+        score = (TextView)findViewById(R.id.text_view_score);
+        countDown = (TextView)findViewById(R.id.count_down_timer);
+        mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
+        mTokenLeft = (TextView) findViewById(R.id.cheat_token);
+        mTrueButton = (Button) findViewById(R.id.true_button);
+        mFalseButton = (Button) findViewById(R.id.false_button);
+        mNextButton = (Button) findViewById(R.id.next_button);
+        mPreviousButton = (ImageButton) findViewById(R.id.previous_button);
+        mResetButton = (Button) findViewById(R.id.reset_button);
+        mCheatButton = (Button) findViewById(R.id.cheat_button);
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
@@ -92,16 +114,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        questionCountTotal = mQuestionBank.length;
-
-        answered_question = (TextView) findViewById(R.id.text_view_question_count);
         answered_question.setText(getString(R.string.no_answered_question) + String.valueOf(mAnsweredQuestions.size()) +"/" + String.valueOf(questionCountTotal));
 
-        score = (TextView)findViewById(R.id.text_view_score);
         score.setText(getString(R.string.score) + mNumberOfCorrect);
 
         //challenge 2.1
-        mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
         mQuestionTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,10 +126,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mTokenLeft = (TextView) findViewById(R.id.cheat_token);
         mTokenLeft.setText(getString(R.string.cheat_token_left) + String.valueOf(mCheatTokenLeft));
 
-        mTrueButton = (Button) findViewById(R.id.true_button);
         mTrueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 checkAnswer(true);
             }
         });
-        mFalseButton = (Button) findViewById(R.id.false_button);
+
         mFalseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mNextButton = (Button) findViewById(R.id.next_button);
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -143,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mPreviousButton = (ImageButton) findViewById(R.id.previous_button);
         mPreviousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mResetButton = (Button) findViewById(R.id.reset_button);
         mResetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mCheatButton = (Button) findViewById(R.id.cheat_button);
         mCheatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
