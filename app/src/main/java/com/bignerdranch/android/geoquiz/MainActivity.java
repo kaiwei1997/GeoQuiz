@@ -22,6 +22,8 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String EXTRA_SCORE = "extra_score";
+
     private Button mTrueButton;
     private Button mFalseButton;
     private Button mResetButton;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_CHEAT_BANK = "cheat_bank";
     private static final String KEY_TOKEN_LEFT = "cheat_token_left";
     private static final String KEY_QUESTION_TOTAL = "no_total_question";
+    private static final String KEY_ANSWERED_QUESTION = "no_answered_question";
 
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
@@ -59,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
 
     private int questionCountTotal;
 
+    private int noAnsweredQuestion = 0;
+
     private int mNumberOfCorrect = 0;
 
     private int mCheatTokenLeft = 3;
@@ -69,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate(Bundle) called");
         setContentView(R.layout.activity_main);
 
+        mResetButton = (Button) findViewById(R.id.reset_button);
+
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
             mAnsweredQuestions = savedInstanceState.getIntegerArrayList(KEY_ANSWER_INDEX);
@@ -76,6 +83,11 @@ public class MainActivity extends AppCompatActivity {
             mCheatBankMap = (HashMap<Integer, Boolean>) savedInstanceState.getSerializable(KEY_CHEAT_BANK);
             mCheatTokenLeft = savedInstanceState.getInt(KEY_TOKEN_LEFT, 3);
             questionCountTotal = savedInstanceState.getInt(KEY_QUESTION_TOTAL,0);
+            noAnsweredQuestion = savedInstanceState.getInt(KEY_ANSWERED_QUESTION,0);
+
+            if(questionCountTotal == noAnsweredQuestion){
+                mResetButton.setVisibility(View.VISIBLE);
+            }
         }
 
         questionCountTotal = mQuestionBank.length;
@@ -109,9 +121,6 @@ public class MainActivity extends AppCompatActivity {
                  myToast.setGravity(Gravity.TOP,100,100);
                  myToast.show();
                  **/
-
-                mTrueButton.setEnabled(false);
-                mFalseButton.setEnabled(false);
                 checkAnswer(true);
             }
         });
@@ -120,8 +129,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Toast.makeText(MainActivity.this,R.string.incorrect_toast,Toast.LENGTH_SHORT).show();
-                mTrueButton.setEnabled(false);
-                mFalseButton.setEnabled(false);
                 checkAnswer(false);
             }
         });
@@ -203,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putSerializable(KEY_CHEAT_BANK, mCheatBankMap);
         savedInstanceState.putInt(KEY_TOKEN_LEFT, mCheatTokenLeft);
         savedInstanceState.putInt(KEY_QUESTION_TOTAL, questionCountTotal);
+        savedInstanceState.putInt(KEY_ANSWERED_QUESTION, noAnsweredQuestion);
     }
 
     @Override
@@ -284,6 +292,11 @@ public class MainActivity extends AppCompatActivity {
         int messageResID = 0;
 
         mAnsweredQuestions.add(mCurrentIndex);
+        noAnsweredQuestion = mAnsweredQuestions.size();
+
+        mTrueButton.setEnabled(false);
+        mFalseButton.setEnabled(false);
+        mCheatButton.setEnabled(false);
 
         if (mCheatBankMap.get(mCurrentIndex) != null && mCheatBankMap.get(mCurrentIndex)) {
             messageResID = R.string.judgment_toast;
@@ -304,21 +317,24 @@ public class MainActivity extends AppCompatActivity {
         score.setText(getString(R.string.score) + String.valueOf(mNumberOfCorrect));
 
         answered_question.setText(getString(R.string.no_answered_question) +
-                String.valueOf(mAnsweredQuestions.size()) +
+                String.valueOf(noAnsweredQuestion) +
                 "/" + String.valueOf(questionCountTotal));
 
-        if (mQuestionBank.length == mAnsweredQuestions.size()) {
+        if (questionCountTotal == noAnsweredQuestion) {
             double mark = ((double) mNumberOfCorrect / (double) mQuestionBank.length) * 100;
             Toast.makeText(MainActivity.this,
                     getString(R.string.amount_of_correct_answers) + Integer.toString(mNumberOfCorrect) + "\n" +
                             getString(R.string.final_mark) + String.format("%.2f", mark) + getString(R.string.percent)
                     , Toast.LENGTH_SHORT).show();
             mResetButton.setVisibility(View.VISIBLE);
-            mCheatButton.setEnabled(false);
         }
     }
 
     private void resetQuiz(){
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_SCORE, mNumberOfCorrect);
+        setResult(RESULT_OK, intent);
+        finish();
 
     }
 }

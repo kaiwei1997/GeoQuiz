@@ -8,6 +8,8 @@ import android.widget.Button;
 
 public class StartingActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CODE_GEO_QUIZ = 1;
+
     private Button startQuiz;
 
     @Override
@@ -26,6 +28,6 @@ public class StartingActivity extends AppCompatActivity {
 
     private void start_quiz(){
         Intent intent = new Intent(StartingActivity.this, MainActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE_GEO_QUIZ);
     }
 }
