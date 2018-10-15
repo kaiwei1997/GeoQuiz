@@ -100,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
         mResetButton = (Button) findViewById(R.id.reset_button);
         mCheatButton = (Button) findViewById(R.id.cheat_button);
 
+        textColorDefaultCountDown = countDown.getTextColors();
+
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
             mAnsweredQuestions = savedInstanceState.getIntegerArrayList(KEY_ANSWER_INDEX);
