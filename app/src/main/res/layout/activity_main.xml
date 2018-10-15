@@ -4,20 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="top|left">
+        android:layout_gravity="top"
+        android:layout_marginTop="10dp">
 
         <TextView
             android:id="@+id/text_view_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
             android:text="@string/score"
             android:textColor="@android:color/black" />
 
@@ -25,12 +24,19 @@
             android:id="@+id/text_view_question_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
             android:text="@string/no_answered_question"
             android:textColor="@android:color/black" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/count_down_timer"
 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="00:30"
+            android:drawableLeft="@drawable/ic_timer_black_24dp"
+            android:textSize="45dp"/>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/question_text_view"
@@ -40,12 +46,15 @@
         android:padding="24dp"
         android:textColor="@color/colorText"
         android:textSize="18dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="25dp"
         tools:text="Question" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_gravity="center">
 
         <Button
             android:id="@+id/true_button"
@@ -64,18 +73,21 @@
         android:id="@+id/cheat_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="@string/cheat_button" />
 
     <TextView
         android:id="@+id/cheat_token"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         tools:text="Token Left" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_gravity="center">
 
         <!--<Button
             android:id="@+id/previous_button"

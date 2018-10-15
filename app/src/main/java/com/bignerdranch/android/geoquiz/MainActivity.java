@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
     private int mCheatTokenLeft = 3;
 
+    private long mBackPressedTime;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,8 +155,7 @@ public class MainActivity extends AppCompatActivity {
         mResetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                startActivity(intent);
+                resetQuiz();
             }
         });
 
@@ -336,5 +337,16 @@ public class MainActivity extends AppCompatActivity {
         setResult(RESULT_OK, intent);
         finish();
 
+    }
+
+    @Override
+    public void onBackPressed(){
+        if(mBackPressedTime + 2000 > System.currentTimeMillis()){
+            resetQuiz();
+        }else{
+            Toast.makeText(MainActivity.this, R.string.back_pressed, Toast.LENGTH_SHORT).show();
+        }
+
+        mBackPressedTime = System.currentTimeMillis();
     }
 }

@@ -27,4 +27,5 @@
     <string name="high_score">High Score: </string>
     <string name="score">Score: </string>
     <string name="no_answered_question">Answered Question: </string>
+    <string name="back_pressed">Press back again to quit geo quiz</string>
 </resources>
