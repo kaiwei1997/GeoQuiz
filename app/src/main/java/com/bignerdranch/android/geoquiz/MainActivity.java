@@ -170,6 +170,10 @@ public class MainActivity extends AppCompatActivity {
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(mCountDownTimer!=null){
+                    mCountDownTimer.cancel();
+                }
                 nextQuestion();
             }
         });
@@ -177,6 +181,9 @@ public class MainActivity extends AppCompatActivity {
         mPreviousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mCountDownTimer!=null){
+                    mCountDownTimer.cancel();
+                }
                 previousQuestion();
             }
         });
@@ -199,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         isCheated = false;
                     }
+                    mCountDownTimer.cancel();
                     Intent intent = CheatActivity.newIntent(MainActivity.this, answerIsTrue, isCheated);
                     startActivityForResult(intent, REQUEST_CODE_CHEAT);
                 } else {
@@ -213,6 +221,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (!mAnsweredQuestions.contains(mCurrentIndex)) {
+            startCountDown();
+            Toast.makeText(MainActivity.this, String.valueOf(mTimeLeftInMills), Toast.LENGTH_SHORT).show();
+        } else {
+            updateCountDownTimerText();
+        }
+
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
@@ -318,7 +333,9 @@ public class MainActivity extends AppCompatActivity {
 
         int messageResID = 0;
 
-        mCountDownTimer.cancel();
+        if(mCountDownTimer!=null){
+            mCountDownTimer.cancel();
+        }
 
         mAnsweredQuestions.add(mCurrentIndex);
         noAnsweredQuestion = mAnsweredQuestions.size();
