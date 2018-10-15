@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Integer> mAnsweredQuestions = new ArrayList<>();
 
+    private HashMap<Integer,Long> mTimeMillsLeft = new HashMap<>();
+
     private int questionCountTotal;
 
     private int noAnsweredQuestion = 0;
@@ -222,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (!mAnsweredQuestions.contains(mCurrentIndex)) {
             startCountDown();
-            Toast.makeText(MainActivity.this, String.valueOf(mTimeLeftInMills), Toast.LENGTH_SHORT).show();
         } else {
             updateCountDownTimerText();
         }
@@ -242,10 +243,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void nextQuestion() {
-        mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
         if(mCountDownTimer!=null){
+            mTimeMillsLeft.put(mCurrentIndex,mTimeLeftInMills);
             mCountDownTimer.cancel();
         }
+        mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
         updateQuestion();
     }
 
@@ -255,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
         /**mCurrentIndex = (5 + mCurrentIndex) % mQuestionBank.length;
          updateQuestion();**/
         if(mCountDownTimer!=null){
+            mTimeMillsLeft.put(mCurrentIndex,mTimeLeftInMills);
             mCountDownTimer.cancel();
         }
         if (mCurrentIndex > 0) {
@@ -291,8 +294,13 @@ public class MainActivity extends AppCompatActivity {
             mFalseButton.setEnabled(true);
             mCheatButton.setEnabled(true);
 
-            mTimeLeftInMills = COUNTDOWN_IN_MILLS;
-            startCountDown();
+            if (mTimeMillsLeft.get(mCurrentIndex) != null){
+                mTimeLeftInMills = mTimeMillsLeft.get(mCurrentIndex);
+                startCountDown();
+            }else {
+                mTimeLeftInMills = COUNTDOWN_IN_MILLS;
+                startCountDown();
+            }
         }
     }
 
