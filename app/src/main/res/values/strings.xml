@@ -30,4 +30,5 @@
     <string name="no_answered_question">Answered Question: </string>
     <string name="back_pressed">Press back again to quit geo quiz</string>
     <string name="no_miss_question">Number of missed question: </string>
+    <string name="summary">Result Summary</string>
 </resources>

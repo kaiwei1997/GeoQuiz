@@ -130,4 +130,14 @@
         android:text="@string/reset_button"
         android:visibility="invisible" />
 
+    <Button
+        android:id="@+id/summary_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginTop="20dp"
+        android:padding="6dp"
+        android:text="@string/summary"
+        />
+
 </LinearLayout>
