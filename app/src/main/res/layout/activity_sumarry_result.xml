@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/summary"
+            android:textColor="@color/colorText"
+            android:textSize="24sp"
+            android:textStyle="bold|italic"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/total_question_answered"
+            android:textColor="@color/colorText"
+            android:padding="6dp"
+            android:layout_gravity="center"
+            android:textSize="18dp"/>
+
+        <TextView
+            android:id="@+id/summary_total_answered"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/colorText"
+            android:textSize="16dp"
+            tools:text= "0"
+            android:padding="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/total_score"
+            android:textColor="@color/colorText"
+            android:textSize="18dp"
+            android:layout_gravity="center"
+            android:padding="6dp"/>
+
+        <TextView
+            android:id="@+id/summary_total_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/colorText"
+            android:textSize="16dp"
+            tools:text= "0"
+            android:padding="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/total_cheat_attempts"
+            android:textColor="@color/colorText"
+            android:textSize="18dp"
+            android:layout_gravity="center"
+            android:padding="6dp"/>
+
+        <TextView
+            android:id="@+id/summary_total_cheat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/colorText"
+            android:textSize="16dp"
+            tools:text= "0"
+            android:padding="4dp"/>
+
+        <Button
+            android:id="@+id/summary_continue_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:text="@string/back"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -31,4 +31,8 @@
     <string name="back_pressed">Press back again to quit geo quiz</string>
     <string name="no_miss_question">Number of missed question: </string>
     <string name="summary">Result Summary</string>
+    <string name="total_score">Total Score</string>
+    <string name="total_question_answered">Total Question Answered</string>
+    <string name="total_cheat_attempts">Total Cheat Attempts</string>
+    <string name="back">Back to Geo Quiz</string>
 </resources>
