@@ -1,7 +1,6 @@
 package com.bignerdranch.android.geoquiz;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -9,18 +8,13 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -126,8 +120,6 @@ public class MainActivity extends AppCompatActivity {
             if (questionCountTotal == noAnsweredQuestion) {
                 mResetButton.setVisibility(View.VISIBLE);
             }
-
-            updateQuestion();
         }
 
         answered_question.setText(getString(R.string.no_answered_question) + String.valueOf(mAnsweredQuestions.size()) + "/" + String.valueOf(questionCountTotal));
@@ -295,6 +287,8 @@ public class MainActivity extends AppCompatActivity {
             mFalseButton.setEnabled(false);
             mCheatButton.setEnabled(false);
             Toast.makeText(MainActivity.this, R.string.answered_question, Toast.LENGTH_SHORT).show();
+            mTimeLeftInMills = mTimeMillsLeftBank.get(mCurrentIndex);
+            updateCountDownTimerText();
         } else {
             mTrueButton.setEnabled(true);
             mFalseButton.setEnabled(true);
@@ -347,6 +341,7 @@ public class MainActivity extends AppCompatActivity {
         int messageResID = 0;
 
         mCountDownTimer.cancel();
+        mTimeMillsLeftBank.put(mCurrentIndex,mTimeLeftInMills);
 
         mAnsweredQuestions.add(mCurrentIndex);
         noAnsweredQuestion = mAnsweredQuestions.size();
@@ -455,7 +450,6 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
         Log.i(TAG, "onSaveInstanceState");
         mTimeMillsLeftBank.put(mCurrentIndex,mTimeLeftInMills);
-        mCountDownTimer.cancel();
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
         savedInstanceState.putIntegerArrayList(KEY_ANSWER_INDEX, mAnsweredQuestions);
         savedInstanceState.putInt(KEY_ANSWER_CORRECT, mNumberOfCorrect);
