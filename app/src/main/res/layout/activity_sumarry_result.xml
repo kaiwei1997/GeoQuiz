@@ -76,13 +76,25 @@
             tools:text= "0"
             android:padding="4dp"/>
 
-        <Button
-            android:id="@+id/summary_continue_button"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/total_miss_question"
+            android:textColor="@color/colorText"
+            android:textSize="18dp"
+            android:layout_gravity="center"
+            android:padding="6dp"
+            />
+
+        <TextView
+            android:id="@+id/summary_total_miss"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
-            android:text="@string/back"/>
+            android:textColor="@color/colorText"
+            android:textSize="16dp"
+            tools:text= "0"
+            android:padding="4dp"/>
     </LinearLayout>
 
 </LinearLayout>

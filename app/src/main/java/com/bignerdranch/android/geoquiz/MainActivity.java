@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
     private static final int REQUEST_CODE_CHEAT = 0;
+    private static final int REQUEST_CODE_SUMMARY =1;
     private static final String KEY_ANSWER_INDEX = "answered_index";
     private static final String KEY_ANSWER_CORRECT = "correct_question";
     private static final String KEY_CHEAT_BANK = "cheat_bank";
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView answered_question;
     private TextView tv_countDown;
     private TextView tv_missedQuestion;
+    private Button mSummaryButton;
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
             new Question(R.string.question_oceans, true),
@@ -106,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         mResetButton = (Button) findViewById(R.id.reset_button);
         mCheatButton = (Button) findViewById(R.id.cheat_button);
         tv_missedQuestion = (TextView) findViewById(R.id.missed_question);
+        mSummaryButton = (Button)findViewById(R.id.summary_button);
 
         textColorDefaultCountDown = tv_countDown.getTextColors();
 
@@ -114,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             mAnsweredQuestions = savedInstanceState.getIntegerArrayList(KEY_ANSWER_INDEX);
             mNumberOfCorrect = savedInstanceState.getInt(KEY_ANSWER_CORRECT, 0);
             mCheatBankMap = (HashMap<Integer, Boolean>) savedInstanceState.getSerializable(KEY_CHEAT_BANK);
-            mCheatTokenLeft = savedInstanceState.getInt(KEY_TOKEN_LEFT, 3);
+            mCheatTokenLeft = savedInstanceState.getInt(KEY_TOKEN_LEFT, 0);
             questionCountTotal = savedInstanceState.getInt(KEY_QUESTION_TOTAL, 0);
             noAnsweredQuestion = savedInstanceState.getInt(KEY_ANSWERED_QUESTION, 0);
             mTimeLeftInMills = savedInstanceState.getLong(KEY_TIME_LEFT, 0);
@@ -223,6 +226,14 @@ public class MainActivity extends AppCompatActivity {
                     mCheatButton.setEnabled(false);
                 }
 
+            }
+        });
+
+        mSummaryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = SumarryResultActivity.newIntent(MainActivity.this, noAnsweredQuestion, mNumberOfCorrect, 3-mCheatTokenLeft, mNumberOfMissQuestion);
+                startActivityForResult(intent,REQUEST_CODE_SUMMARY);
             }
         });
 
