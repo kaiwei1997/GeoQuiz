@@ -385,9 +385,9 @@ public class MainActivity extends AppCompatActivity {
             double mark = ((double) mNumberOfCorrect / (double) mQuestionBank.length) * 100;
             Toast.makeText(MainActivity.this,
                     getString(R.string.amount_of_correct_answers) + Integer.toString(mNumberOfCorrect) + "\n" +
-                            getString(R.string.final_mark) + String.format("%.2f", mark) + getString(R.string.percent)
+                            getString(R.string.final_mark) + String.format("%.2f", mark) + getString(R.string.percent) +
+                    "\n"+ getString(R.string.total_used_time) + calculateUsedTime()
                     , Toast.LENGTH_SHORT).show();
-            calculateUsedTime();
             mResetButton.setVisibility(View.VISIBLE);
         }
     }
@@ -400,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void calculateUsedTime(){
+    private String calculateUsedTime(){
         long sumOfMills = 0;
         for(int i =0; i < mTimeMillsLeftBank.size(); i++){
             sumOfMills += mTimeMillsLeftBank.get(i);
@@ -411,7 +411,8 @@ public class MainActivity extends AppCompatActivity {
         int seconds = (int) (mUsedTimeInMills / 1000) % 60;
 
         String time_formatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
-        Toast.makeText(MainActivity.this,time_formatted,Toast.LENGTH_SHORT).show();
+
+        return time_formatted;
     }
 
     @Override
