@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.CountDownTimer;
+import android.support.v4.math.MathUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
     private CountDownTimer mCountDownTimer;
     private long mTimeLeftInMills;
+    private long mUsedTimeInMills;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -385,6 +387,7 @@ public class MainActivity extends AppCompatActivity {
                     getString(R.string.amount_of_correct_answers) + Integer.toString(mNumberOfCorrect) + "\n" +
                             getString(R.string.final_mark) + String.format("%.2f", mark) + getString(R.string.percent)
                     , Toast.LENGTH_SHORT).show();
+            calculateUsedTime();
             mResetButton.setVisibility(View.VISIBLE);
         }
     }
@@ -395,6 +398,20 @@ public class MainActivity extends AppCompatActivity {
         setResult(RESULT_OK, intent);
         finish();
 
+    }
+
+    private void calculateUsedTime(){
+        long sumOfMills = 0;
+        for(int i =0; i < mTimeMillsLeftBank.size(); i++){
+            sumOfMills += mTimeMillsLeftBank.get(i);
+        }
+        mUsedTimeInMills = (questionCountTotal * COUNTDOWN_IN_MILLS) - (sumOfMills);
+
+        int minutes = (int) (mUsedTimeInMills / 1000) / 60;
+        int seconds = (int) (mUsedTimeInMills / 1000) % 60;
+
+        String time_formatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+        Toast.makeText(MainActivity.this,time_formatted,Toast.LENGTH_SHORT).show();
     }
 
     @Override
