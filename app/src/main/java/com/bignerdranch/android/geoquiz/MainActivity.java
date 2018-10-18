@@ -28,7 +28,17 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_SCORE = "extra_score";
     private static final long COUNTDOWN_IN_MILLS = 15000;
-
+    private static final String TAG = "QuizActivity";
+    private static final String KEY_INDEX = "index";
+    private static final int REQUEST_CODE_CHEAT = 0;
+    private static final String KEY_ANSWER_INDEX = "answered_index";
+    private static final String KEY_ANSWER_CORRECT = "correct_question";
+    private static final String KEY_CHEAT_BANK = "cheat_bank";
+    private static final String KEY_TOKEN_LEFT = "cheat_token_left";
+    private static final String KEY_QUESTION_TOTAL = "no_total_question";
+    private static final String KEY_ANSWERED_QUESTION = "no_answered_question";
+    private static final String KEY_TIME_LEFT = "time_left";
+    private static final String KEY_TIME_LEFT_BANK = "time_left_map";
     private Button mTrueButton;
     private Button mFalseButton;
     private Button mResetButton;
@@ -41,18 +51,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView answered_question;
     private TextView tv_countDown;
     private TextView tv_missedQuestion;
-
-    private static final String TAG = "QuizActivity";
-    private static final String KEY_INDEX = "index";
-    private static final int REQUEST_CODE_CHEAT = 0;
-    private static final String KEY_ANSWER_INDEX = "answered_index";
-    private static final String KEY_ANSWER_CORRECT = "correct_question";
-    private static final String KEY_CHEAT_BANK = "cheat_bank";
-    private static final String KEY_TOKEN_LEFT = "cheat_token_left";
-    private static final String KEY_QUESTION_TOTAL = "no_total_question";
-    private static final String KEY_ANSWERED_QUESTION = "no_answered_question";
-    private static final String KEY_TIME_LEFT = "time_left";
-
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
             new Question(R.string.question_oceans, true),
@@ -68,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Integer> mAnsweredQuestions = new ArrayList<>();
 
-    private HashMap<Integer,Long> mTimeMillsLeft = new HashMap<>();
+    private HashMap<Integer, Long> mTimeMillsLeftBank = new HashMap<>();
 
     private int questionCountTotal;
 
@@ -120,16 +118,27 @@ public class MainActivity extends AppCompatActivity {
             questionCountTotal = savedInstanceState.getInt(KEY_QUESTION_TOTAL, 0);
             noAnsweredQuestion = savedInstanceState.getInt(KEY_ANSWERED_QUESTION, 0);
             mTimeLeftInMills = savedInstanceState.getLong(KEY_TIME_LEFT, 0);
+            //mTimeMillsLeft = (HashMap<Integer, Long>) savedInstanceState.getSerializable(KEY_TIME_LEFT_BANK);
 
             if (questionCountTotal == noAnsweredQuestion) {
                 mResetButton.setVisibility(View.VISIBLE);
             }
 
             if (!mAnsweredQuestions.contains(mCurrentIndex)) {
+                Toast.makeText(MainActivity.this,String.valueOf(mTimeLeftInMills),Toast.LENGTH_SHORT).show();
+                Log.d(TAG,"count down" + String.valueOf(mTimeLeftInMills));
                 startCountDown();
             } else {
                 updateCountDownTimerText();
             }
+
+            /**if (mTimeMillsLeft.get(mCurrentIndex) != null){
+             mTimeLeftInMills = mTimeMillsLeft.get(mCurrentIndex);
+             startCountDown();
+             }else {
+             mTimeLeftInMills = COUNTDOWN_IN_MILLS;
+             startCountDown();
+             }**/
         }
 
         answered_question.setText(getString(R.string.no_answered_question) + String.valueOf(mAnsweredQuestions.size()) + "/" + String.valueOf(questionCountTotal));
@@ -172,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(mCountDownTimer!=null){
+                if (mCountDownTimer != null) {
                     mCountDownTimer.cancel();
                 }
                 nextQuestion();
@@ -182,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         mPreviousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mCountDownTimer!=null){
+                if (mCountDownTimer != null) {
                     mCountDownTimer.cancel();
                 }
                 previousQuestion();
@@ -243,8 +252,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void nextQuestion() {
-        if(mCountDownTimer!=null){
-            mTimeMillsLeft.put(mCurrentIndex,mTimeLeftInMills);
+        if (mCountDownTimer != null) {
+            mTimeMillsLeftBank.put(mCurrentIndex, mTimeLeftInMills);
             mCountDownTimer.cancel();
         }
         mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
@@ -256,8 +265,8 @@ public class MainActivity extends AppCompatActivity {
     private void previousQuestion() {
         /**mCurrentIndex = (5 + mCurrentIndex) % mQuestionBank.length;
          updateQuestion();**/
-        if(mCountDownTimer!=null){
-            mTimeMillsLeft.put(mCurrentIndex,mTimeLeftInMills);
+        if (mCountDownTimer != null) {
+            mTimeMillsLeftBank.put(mCurrentIndex, mTimeLeftInMills);
             mCountDownTimer.cancel();
         }
         if (mCurrentIndex > 0) {
@@ -294,10 +303,10 @@ public class MainActivity extends AppCompatActivity {
             mFalseButton.setEnabled(true);
             mCheatButton.setEnabled(true);
 
-            if (mTimeMillsLeft.get(mCurrentIndex) != null){
-                mTimeLeftInMills = mTimeMillsLeft.get(mCurrentIndex);
+            if (mTimeMillsLeftBank.get(mCurrentIndex) != null) {
+                mTimeLeftInMills = mTimeMillsLeftBank.get(mCurrentIndex);
                 startCountDown();
-            }else {
+            } else {
                 mTimeLeftInMills = COUNTDOWN_IN_MILLS;
                 startCountDown();
             }
@@ -340,9 +349,7 @@ public class MainActivity extends AppCompatActivity {
 
         int messageResID = 0;
 
-        if(mCountDownTimer!=null){
-            mCountDownTimer.cancel();
-        }
+        mCountDownTimer.cancel();
 
         mAnsweredQuestions.add(mCurrentIndex);
         noAnsweredQuestion = mAnsweredQuestions.size();
@@ -351,10 +358,10 @@ public class MainActivity extends AppCompatActivity {
         mFalseButton.setEnabled(false);
         mCheatButton.setEnabled(false);
 
-        if(userPressedTrue == null){
+        if (userPressedTrue == null) {
             messageResID = R.string.miss_question;
             mNumberOfMissQuestion += 1;
-        }else {
+        } else {
             if (mCheatBankMap.get(mCurrentIndex) != null && mCheatBankMap.get(mCurrentIndex)) {
                 messageResID = R.string.judgment_toast;
                 if (String.valueOf(answerIsTrue) == userPressedTrue) {
@@ -410,20 +417,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        Log.i(TAG, "onSaveInstanceState");
-        savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
-        savedInstanceState.putIntegerArrayList(KEY_ANSWER_INDEX, mAnsweredQuestions);
-        savedInstanceState.putInt(KEY_ANSWER_CORRECT, mNumberOfCorrect);
-        savedInstanceState.putSerializable(KEY_CHEAT_BANK, mCheatBankMap);
-        savedInstanceState.putInt(KEY_TOKEN_LEFT, mCheatTokenLeft);
-        savedInstanceState.putInt(KEY_QUESTION_TOTAL, questionCountTotal);
-        savedInstanceState.putInt(KEY_ANSWERED_QUESTION, noAnsweredQuestion);
-        savedInstanceState.putLong(KEY_TIME_LEFT, mTimeLeftInMills);
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         Log.d(TAG, "onStart() called");
@@ -446,15 +439,30 @@ public class MainActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         Log.d(TAG, "onStop() called");
+        if(mCountDownTimer!= null){
+            mCountDownTimer.cancel();
+        }
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         Log.d(TAG, "onDestroy() called");
+        super.onDestroy();
+    }
 
-        if (mCountDownTimer != null) {
-            mCountDownTimer.cancel();
-        }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i(TAG, "onSaveInstanceState");
+        savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+        savedInstanceState.putIntegerArrayList(KEY_ANSWER_INDEX, mAnsweredQuestions);
+        savedInstanceState.putInt(KEY_ANSWER_CORRECT, mNumberOfCorrect);
+        savedInstanceState.putSerializable(KEY_CHEAT_BANK, mCheatBankMap);
+        savedInstanceState.putInt(KEY_TOKEN_LEFT, mCheatTokenLeft);
+        savedInstanceState.putInt(KEY_QUESTION_TOTAL, questionCountTotal);
+        savedInstanceState.putInt(KEY_ANSWERED_QUESTION, noAnsweredQuestion);
+        savedInstanceState.putLong(KEY_TIME_LEFT, mTimeLeftInMills);
+        Log.d(TAG,String.valueOf(mTimeLeftInMills));
+        //savedInstanceState.putSerializable(KEY_TIME_LEFT_BANK, mTimeMillsLeftBank);
     }
 }
