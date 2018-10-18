@@ -120,28 +120,14 @@ public class MainActivity extends AppCompatActivity {
             mCheatTokenLeft = savedInstanceState.getInt(KEY_TOKEN_LEFT, 0);
             questionCountTotal = savedInstanceState.getInt(KEY_QUESTION_TOTAL, 0);
             noAnsweredQuestion = savedInstanceState.getInt(KEY_ANSWERED_QUESTION, 0);
-            mTimeLeftInMills = savedInstanceState.getLong(KEY_TIME_LEFT, 0);
-            //mTimeMillsLeft = (HashMap<Integer, Long>) savedInstanceState.getSerializable(KEY_TIME_LEFT_BANK);
+            mTimeLeftInMills = savedInstanceState.getLong(KEY_TIME_LEFT);
+            mTimeMillsLeftBank = (HashMap<Integer, Long>) savedInstanceState.getSerializable(KEY_TIME_LEFT_BANK);
 
             if (questionCountTotal == noAnsweredQuestion) {
                 mResetButton.setVisibility(View.VISIBLE);
             }
 
-            if (!mAnsweredQuestions.contains(mCurrentIndex)) {
-                Toast.makeText(MainActivity.this,String.valueOf(mTimeLeftInMills),Toast.LENGTH_SHORT).show();
-                Log.d(TAG,"count down" + String.valueOf(mTimeLeftInMills));
-                startCountDown();
-            } else {
-                updateCountDownTimerText();
-            }
-
-            /**if (mTimeMillsLeft.get(mCurrentIndex) != null){
-             mTimeLeftInMills = mTimeMillsLeft.get(mCurrentIndex);
-             startCountDown();
-             }else {
-             mTimeLeftInMills = COUNTDOWN_IN_MILLS;
-             startCountDown();
-             }**/
+            updateQuestion();
         }
 
         answered_question.setText(getString(R.string.no_answered_question) + String.valueOf(mAnsweredQuestions.size()) + "/" + String.valueOf(questionCountTotal));
@@ -459,12 +445,17 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         Log.d(TAG, "onDestroy() called");
         super.onDestroy();
+        if(mCountDownTimer!= null){
+            mCountDownTimer.cancel();
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         Log.i(TAG, "onSaveInstanceState");
+        mTimeMillsLeftBank.put(mCurrentIndex,mTimeLeftInMills);
+        mCountDownTimer.cancel();
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
         savedInstanceState.putIntegerArrayList(KEY_ANSWER_INDEX, mAnsweredQuestions);
         savedInstanceState.putInt(KEY_ANSWER_CORRECT, mNumberOfCorrect);
@@ -473,7 +464,6 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putInt(KEY_QUESTION_TOTAL, questionCountTotal);
         savedInstanceState.putInt(KEY_ANSWERED_QUESTION, noAnsweredQuestion);
         savedInstanceState.putLong(KEY_TIME_LEFT, mTimeLeftInMills);
-        Log.d(TAG,String.valueOf(mTimeLeftInMills));
-        //savedInstanceState.putSerializable(KEY_TIME_LEFT_BANK, mTimeMillsLeftBank);
+        savedInstanceState.putSerializable(KEY_TIME_LEFT_BANK, mTimeMillsLeftBank);
     }
 }
