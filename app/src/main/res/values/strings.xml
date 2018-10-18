@@ -35,5 +35,6 @@
     <string name="total_question_answered">Total Question Answered</string>
     <string name="total_cheat_attempts">Total Cheat Attempts</string>
     <string name="total_miss_question">Total Missed Question</string>
-    <string name="total_used_time">Total Used Time: </string>
+    <string name="total_used_time_toast">Total used time: </string>
+    <string name="total_used_time">Total Used Time</string>
 </resources>
