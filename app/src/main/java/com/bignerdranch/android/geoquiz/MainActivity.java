@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         mSummaryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = SumarryResultActivity.newIntent(MainActivity.this, noAnsweredQuestion, mNumberOfCorrect, 3-mCheatTokenLeft, mNumberOfMissQuestion);
+                Intent intent = SumarryResultActivity.newIntent(MainActivity.this, noAnsweredQuestion, mNumberOfCorrect, 3-mCheatTokenLeft, mNumberOfMissQuestion, calculateUsedTime());
                 startActivityForResult(intent,REQUEST_CODE_SUMMARY);
             }
         });
@@ -405,7 +405,7 @@ public class MainActivity extends AppCompatActivity {
         for(int i =0; i < mTimeMillsLeftBank.size(); i++){
             sumOfMills += mTimeMillsLeftBank.get(i);
         }
-        mUsedTimeInMills = (questionCountTotal * COUNTDOWN_IN_MILLS) - (sumOfMills);
+        mUsedTimeInMills = (noAnsweredQuestion * COUNTDOWN_IN_MILLS) - (sumOfMills);
 
         int minutes = (int) (mUsedTimeInMills / 1000) / 60;
         int seconds = (int) (mUsedTimeInMills / 1000) % 60;
