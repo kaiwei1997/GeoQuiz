@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
 
     private CountDownTimer mCountDownTimer;
     private long mTimeLeftInMills;
-    private long mUsedTimeInMills;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -402,6 +401,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String calculateUsedTime(){
         long sumOfMills = 0;
+        long mUsedTimeInMills;
         for(int i =0; i < mTimeMillsLeftBank.size(); i++){
             sumOfMills += mTimeMillsLeftBank.get(i);
         }
