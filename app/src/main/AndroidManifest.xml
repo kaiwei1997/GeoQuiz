@@ -18,7 +18,7 @@
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".CheatActivity" />
-        <activity android:name=".SumarryResultActivity"></activity>
+        <activity android:name=".SummaryResultActivity"></activity>
     </application>
 
 </manifest>
