@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
         mSummaryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = SumarryResultActivity.newIntent(MainActivity.this, noAnsweredQuestion, mNumberOfCorrect, 3-mCheatTokenLeft, mNumberOfMissQuestion, calculateUsedTime());
+                Intent intent = SummaryResultActivity.newIntent(MainActivity.this, noAnsweredQuestion, mNumberOfCorrect, 3-mCheatTokenLeft, mNumberOfMissQuestion, calculateUsedTime());
                 startActivityForResult(intent,REQUEST_CODE_SUMMARY);
             }
         });

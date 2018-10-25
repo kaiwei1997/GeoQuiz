@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
-public class SumarryResultActivity extends AppCompatActivity {
+public class SummaryResultActivity extends AppCompatActivity {
 
     public final static String KEY_EXTRA_SCORE = "com.bignerdranch.android.geoquiz.total_score";
     public final static String KEY_EXTRA_ANSWERED = "com.bignerdranch.android.geoquiz.total_answered_question";
@@ -30,7 +30,7 @@ public class SumarryResultActivity extends AppCompatActivity {
     private TextView tv_timeUsed;
 
     public static Intent newIntent(Context packageContext, int answered, int score, int cheat, int miss, String timeUsed) {
-        Intent intent = new Intent(packageContext, SumarryResultActivity.class);
+        Intent intent = new Intent(packageContext, SummaryResultActivity.class);
         intent.putExtra(KEY_EXTRA_ANSWERED, answered);
         intent.putExtra(KEY_EXTRA_SCORE, score);
         intent.putExtra(KEY_EXTRA_CHEAT, cheat);
