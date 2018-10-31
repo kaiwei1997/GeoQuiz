@@ -140,8 +140,7 @@ public class MainActivity extends AppCompatActivity {
         mTrueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /**
-                 * Challenge 1
+                /** Challenge 1
                  Toast myToast;
                  myToast = Toast.makeText(MainActivity.this,R.string.correct_toast,Toast.LENGTH_SHORT);
                  myToast.setGravity(Gravity.TOP,100,100);
